@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Authors>Chris Håland</Authors>
+    <PackageId>Haland.CamundaExternalTask</PackageId>
+    <AssemblyName>Haland.CamundaExternalTask</AssemblyName>
+    <RootNamespace>Haland.CamundaExternalTask</RootNamespace>
+    <PackageProjectUrl>https://github.com/chrishaland/camunda-external-task</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/chrishaland/camunda-external-task/main/LICENSE</PackageLicenseUrl>
+    <Description>This project implements the external task pattern for Camunda, allowing a .NET application to complete BPMN tasks.</Description>
+    <TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.23" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.23" />
+  </ItemGroup>
+</Project>

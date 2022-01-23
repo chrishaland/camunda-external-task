@@ -1,0 +1,48 @@
+parameters:
+- name: sdk
+  type: string
+  default: '6.0'
+- name: framework
+  type: string
+  default: 'net6.0'
+- name: project
+  type: string
+  default: '.'
+  
+jobs: 
+- job: dotnet_test_${{ replace(parameters['framework'], '.', '_') }}
+  pool:
+    vmImage: ubuntu-latest
+  displayName: Test ${{ parameters.framework }}
+  steps:
+  - template: .dotnet-restore.yml
+  - task: UseDotNet@2
+    inputs:
+      version: ${{ parameters.sdk }}.x
+      includePreviewVersions: true
+  - task: DotNetCoreCLI@2
+    displayName: Test
+    inputs:
+      command: test
+      projects: '${{ parameters.project }}'
+      packagesDirectory: packages
+      arguments: '--framework ${{ parameters.framework }} --no-restore --test-adapter-path:. --logger:"\"nunit;LogFilePath=test-result.xml\"'
+    continueOnError: true
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: NUnit
+      testResultsFiles: '**/test-result.xml'
+      failTaskOnFailedTests: true
+  - task: DotNetCoreCLI@2
+    displayName: Code coverage
+    inputs:
+      command: test
+      projects: '${{ parameters.project }}'
+      packagesDirectory: packages
+      arguments: '--framework ${{ parameters.framework }} --no-build  --settings coverlet.runsettings --collect:"\"XPlat Code Coverage\"'
+    continueOnError: true
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: 'Cobertura'
+      summaryFileLocation: '$(Agent.TempDirectory)/*/coverage.cobertura.xml'
+      failIfCoverageEmpty: true

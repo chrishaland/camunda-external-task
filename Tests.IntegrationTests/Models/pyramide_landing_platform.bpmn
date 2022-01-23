@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_17fxq3w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="pyramide_landing_platform_theory" name="Pyramids as landing platforms theory" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Daniel Jackson holds lecture on pyramids being landing platforms for alien spaceships">
+      <bpmn:outgoing>Flow_1v8188y</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1v8188y" sourceRef="StartEvent_1" targetRef="Activity_1wp1kqs" />
+    <bpmn:exclusiveGateway id="Gateway_1424gl7" name="Catherine Langford contacts Mr. Jackson about secret job">
+      <bpmn:incoming>Flow_0cd8b59</bpmn:incoming>
+      <bpmn:outgoing>Flow_0skvikt</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0caw6gw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0cd8b59" sourceRef="Activity_1wp1kqs" targetRef="Gateway_1424gl7" />
+    <bpmn:sequenceFlow id="Flow_0skvikt" name="Yes" sourceRef="Gateway_1424gl7" targetRef="Activity_0zdmf5g">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{contact}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0caw6gw" name="No" sourceRef="Gateway_1424gl7" targetRef="Activity_1ojqjyu" />
+    <bpmn:endEvent id="Event_0667zcs">
+      <bpmn:incoming>Flow_1nzz2t8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_1l68of0">
+      <bpmn:incoming>Flow_10qj07v</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_1wp1kqs" name="Gets laughted at by entire archaeological community" camunda:type="external" camunda:topic="ridiculed">
+      <bpmn:incoming>Flow_1v8188y</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cd8b59</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0zdmf5g" name="Solves the Stargate riddle" camunda:type="external" camunda:topic="stargate">
+      <bpmn:incoming>Flow_0skvikt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s1tayk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1ojqjyu" name="Takes job as English teacher" camunda:type="external" camunda:topic="teacher">
+      <bpmn:incoming>Flow_0caw6gw</bpmn:incoming>
+      <bpmn:outgoing>Flow_13s2uml</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0s1tayk" sourceRef="Activity_0zdmf5g" targetRef="Activity_1k22ctr" />
+    <bpmn:sequenceFlow id="Flow_10qj07v" sourceRef="Activity_1k22ctr" targetRef="Event_1l68of0" />
+    <bpmn:userTask id="Activity_1k22ctr" name="Goes to Abydos">
+      <bpmn:incoming>Flow_0s1tayk</bpmn:incoming>
+      <bpmn:outgoing>Flow_10qj07v</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_13s2uml" sourceRef="Activity_1ojqjyu" targetRef="Activity_0cb7l52" />
+    <bpmn:sequenceFlow id="Flow_1nzz2t8" sourceRef="Activity_0cb7l52" targetRef="Event_0667zcs" />
+    <bpmn:userTask id="Activity_0cb7l52" name="Goes to Chulak">
+      <bpmn:incoming>Flow_13s2uml</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nzz2t8</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="pyramide_landing_platform_theory">
+      <bpmndi:BPMNEdge id="Flow_1nzz2t8_di" bpmnElement="Flow_1nzz2t8">
+        <di:waypoint x="790" y="290" />
+        <di:waypoint x="852" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13s2uml_di" bpmnElement="Flow_13s2uml">
+        <di:waypoint x="630" y="290" />
+        <di:waypoint x="690" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10qj07v_di" bpmnElement="Flow_10qj07v">
+        <di:waypoint x="790" y="177" />
+        <di:waypoint x="852" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s1tayk_di" bpmnElement="Flow_0s1tayk">
+        <di:waypoint x="630" y="177" />
+        <di:waypoint x="690" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0caw6gw_di" bpmnElement="Flow_0caw6gw">
+        <di:waypoint x="450" y="202" />
+        <di:waypoint x="450" y="290" />
+        <di:waypoint x="530" y="290" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="458" y="243" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0skvikt_di" bpmnElement="Flow_0skvikt">
+        <di:waypoint x="475" y="177" />
+        <di:waypoint x="530" y="177" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="494" y="159" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cd8b59_di" bpmnElement="Flow_0cd8b59">
+        <di:waypoint x="370" y="177" />
+        <di:waypoint x="425" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v8188y_di" bpmnElement="Flow_1v8188y">
+        <di:waypoint x="215" y="177" />
+        <di:waypoint x="270" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="202" width="85" height="80" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1424gl7_di" bpmnElement="Gateway_1424gl7" isMarkerVisible="true">
+        <dc:Bounds x="425" y="152" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="406" y="88.5" width="88" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0667zcs_di" bpmnElement="Event_0667zcs">
+        <dc:Bounds x="852" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1l68of0_di" bpmnElement="Event_1l68of0">
+        <dc:Bounds x="852" y="159" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1j3douv_di" bpmnElement="Activity_1wp1kqs">
+        <dc:Bounds x="270" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_014jkcx_di" bpmnElement="Activity_0zdmf5g">
+        <dc:Bounds x="530" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04faop4_di" bpmnElement="Activity_1ojqjyu">
+        <dc:Bounds x="530" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ebt47q_di" bpmnElement="Activity_1k22ctr">
+        <dc:Bounds x="690" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17rknvb_di" bpmnElement="Activity_0cb7l52">
+        <dc:Bounds x="690" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

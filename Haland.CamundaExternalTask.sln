@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31612.314
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.IntegrationTests", "Tests.IntegrationTests\Tests.IntegrationTests.csproj", "{C0BDCC44-66E4-4D2E-BC7E-8936DE40D381}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library", "Library\Library.csproj", "{92811B0B-802A-4732-8CA8-FD622E1686FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.UnitTests", "Tests.UnitTests\Tests.UnitTests.csproj", "{1B9E22A5-5B04-4D56-A1D2-8E1FC97A91D0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BCAFD9EB-3578-4105-A651-6EFD90B77B82}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		coverlet.runsettings = coverlet.runsettings
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure Pipeline", "Azure Pipeline", "{8D5A5B5F-1EE4-4033-8EE8-E72AD7F4E145}"
+	ProjectSection(SolutionItems) = preProject
+		.azure-pipeline-build.yml = .azure-pipeline-build.yml
+		.azure-pipeline-publish.yml = .azure-pipeline-publish.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{CC63A721-149A-423D-AAAE-7CC45FF149D9}"
+	ProjectSection(SolutionItems) = preProject
+		.azure-pipeline-templates\.dotnet-build.yml = .azure-pipeline-templates\.dotnet-build.yml
+		.azure-pipeline-templates\.dotnet-restore.yml = .azure-pipeline-templates\.dotnet-restore.yml
+		.azure-pipeline-templates\.dotnet-test.yml = .azure-pipeline-templates\.dotnet-test.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92811B0B-802A-4732-8CA8-FD622E1686FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92811B0B-802A-4732-8CA8-FD622E1686FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92811B0B-802A-4732-8CA8-FD622E1686FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92811B0B-802A-4732-8CA8-FD622E1686FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0BDCC44-66E4-4D2E-BC7E-8936DE40D381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0BDCC44-66E4-4D2E-BC7E-8936DE40D381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0BDCC44-66E4-4D2E-BC7E-8936DE40D381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0BDCC44-66E4-4D2E-BC7E-8936DE40D381}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B9E22A5-5B04-4D56-A1D2-8E1FC97A91D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B9E22A5-5B04-4D56-A1D2-8E1FC97A91D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B9E22A5-5B04-4D56-A1D2-8E1FC97A91D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B9E22A5-5B04-4D56-A1D2-8E1FC97A91D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CC63A721-149A-423D-AAAE-7CC45FF149D9} = {8D5A5B5F-1EE4-4033-8EE8-E72AD7F4E145}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0C5F7618-C977-4572-BE9A-33AFDF4F3AD8}
+	EndGlobalSection
+EndGlobal
