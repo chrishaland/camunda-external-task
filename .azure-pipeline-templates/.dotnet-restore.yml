@@ -1,0 +1,18 @@
+steps:
+- task: UseDotNet@2
+  inputs:
+    version: 6.0.x
+    includePreviewVersions: true
+- task: Cache@2
+  inputs:
+    key: 'nuget | "$(Agent.OS)" | **/packages.lock.json, !**/bin/**'
+    restoreKeys: |
+      nuget | "$(Agent.OS)"
+    path: packages
+  displayName: NuGet packages cache
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+    restoreArguments: --locked-mode
+    packagesDirectory: packages
