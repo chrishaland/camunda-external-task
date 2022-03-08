@@ -213,11 +213,24 @@ internal class BpmnErrorExternalTaskDto
 
 internal class VariableDto
 {
-    public VariableDto(JToken value)
+    public VariableDto(JToken value, ValueInfoDto? valueInfo = null)
     {
         Value = value;
+        ValueInfo = valueInfo;
     }
 
     public JToken Value { get; set; }
     public string Type { get => Value.Type.ToString(); }
+    public ValueInfoDto? ValueInfo { get; set; }
+}
+
+internal class ValueInfoDto
+{
+    public string? ObjectTypeName { get; set; }
+    public string? SerializationDataFormat { get; set; }
+    [JsonProperty("filename")]
+    public string? FileName { get; set; }
+    [JsonProperty("mimetype")]
+    public string? MimeType { get; set; }
+    public string? Encoding { get; set; }
 }

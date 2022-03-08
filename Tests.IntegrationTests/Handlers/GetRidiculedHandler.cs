@@ -17,9 +17,9 @@ public class GetRidiculedHandler : ExternalTaskHandler
         var surname = externalTask.Variables["Surname"];
         _logger.LogInformation("The process instances has a variable '{VariableName}' with value '{VariableValue}'", "Surname", surname);
 
-        return new ExternalTaskCompleteResult(new Dictionary<string, JToken>
+        return new ExternalTaskCompleteResult(new Dictionary<string, Variable>
         {
-            { "contact", new JValue(new Random().Next(0, 1) == 0)) }
+            { "contact", new Variable(new JValue(new Random().Next(0, 1) == 0)) }
         });
     }
 }
