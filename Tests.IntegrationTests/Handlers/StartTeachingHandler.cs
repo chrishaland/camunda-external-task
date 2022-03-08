@@ -7,9 +7,9 @@ public class StartTeachingHandler : ExternalTaskHandler
     public override async Task<ExternalTaskResult> Execute(ExternalTask externalTask, CancellationToken ct)
     {
         await Task.CompletedTask;
-        return new ExternalTaskCompleteResult(new Dictionary<string, JToken>
+        return new ExternalTaskCompleteResult(new Dictionary<string, Variable>
         {
-            { "started_teaching", new JValue(true) }
+            { "started_teaching", new Variable(new JValue(true)) }
         });
     }
 }

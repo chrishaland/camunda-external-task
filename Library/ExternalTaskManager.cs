@@ -66,7 +66,16 @@ internal class ExternalTaskManager
             var externalTask = new ExternalTask(
                 Id: task.Id, 
                 WorkerId: task.WorkerId, 
-                Variables: task.Variables.ToDictionary((kv) => kv.Key, kv => kv.Value.Value)
+                Variables: task.Variables.ToDictionary((kv) => kv.Key, kv => new Variable(
+                    Value: kv.Value.Value, 
+                    ValueInfo: kv.Value.ValueInfo == null ? null : new ValueInfo(
+                        ObjectTypeName: kv.Value.ValueInfo.ObjectTypeName,
+                        SerializationDataFormat: kv.Value.ValueInfo.SerializationDataFormat,
+                        FileName: kv.Value.ValueInfo.FileName,
+                        MimeType: kv.Value.ValueInfo.MimeType,
+                        Encoding: kv.Value.ValueInfo.Encoding
+                    )
+                ))
             );
 
             ExternalTaskResult result;
@@ -113,7 +122,17 @@ internal class ExternalTaskManager
             await _client.Complete(task.Id, new CompleteExternalTaskDto
             {
                 WorkerId = task.WorkerId,
-                Variables = completeResult.Variables?.ToDictionary((kv) => kv.Key, kv => new VariableDto(kv.Value))
+                Variables = completeResult.Variables?.ToDictionary((kv) => kv.Key, kv => new VariableDto(
+                    value: kv.Value.Value,
+                    valueInfo: kv.Value.ValueInfo == null ? null : new ValueInfoDto 
+                    {
+                        Encoding = kv.Value.ValueInfo.Encoding,
+                        FileName = kv.Value.ValueInfo.FileName,
+                        MimeType = kv.Value.ValueInfo.MimeType,
+                        ObjectTypeName = kv.Value.ValueInfo.ObjectTypeName,
+                        SerializationDataFormat = kv.Value.ValueInfo.SerializationDataFormat
+                    }
+                ))
             }, cancellationToken);
         }
         else if (result is ExternalTaskBpmnErrorResult bpmnErrorResult)
