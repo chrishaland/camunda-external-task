@@ -14,16 +14,13 @@ public class Startup
         camunda
             .AddExternalTask<Test1TaskHandler>()
             .AddExternalTask<Test2TaskHandler>()
+            .AddExternalTask<Test3TaskHandler>()
             .ConfigurePrimaryHttpMessageHandler(_ => new Mock<HttpMessageHandler>().Object)
         ;
     }
 
     public void Configure(IApplicationBuilder app)
     {
-        app.Map("/ok", app => app.Run(async context =>
-        {
-            await context.Response.WriteAsync("ok");
-        }));
     }
 }
 #endif
