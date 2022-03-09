@@ -10,16 +10,11 @@ var camunda = builder.Services.AddCamunda(options =>
 camunda
     .AddExternalTask<Tests.UnitTests.ConfigureServicesTests.Test1TaskHandler>()
     .AddExternalTask<Tests.UnitTests.ConfigureServicesTests.Test2TaskHandler>()
+    .AddExternalTask<Tests.UnitTests.ConfigureServicesTests.Test3TaskHandler>()
     .ConfigurePrimaryHttpMessageHandler(_ => new Mock<HttpMessageHandler>().Object)
 ;
 
 var app = builder.Build();
-
-app.Map("/ok", app => app.Run(async context =>
-{
-    await context.Response.WriteAsync("ok");
-}));
-
 app.Run();
 
 #pragma warning disable CA1050 // Declare types in namespaces
