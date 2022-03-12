@@ -12,7 +12,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0cd8b59" sourceRef="Activity_1wp1kqs" targetRef="Gateway_1424gl7" />
     <bpmn:sequenceFlow id="Flow_0skvikt" name="Yes" sourceRef="Gateway_1424gl7" targetRef="Activity_0zdmf5g">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{contact}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{contact == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0caw6gw" name="No" sourceRef="Gateway_1424gl7" targetRef="Activity_1ojqjyu" />
     <bpmn:endEvent id="Event_0667zcs">

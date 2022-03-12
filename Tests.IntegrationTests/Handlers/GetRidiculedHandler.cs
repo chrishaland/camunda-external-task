@@ -19,7 +19,7 @@ public class GetRidiculedHandler : ExternalTaskHandler
 
         return new ExternalTaskCompleteResult(new Dictionary<string, Variable>
         {
-            { "contact", new Variable(new JValue(new Random().Next(0, 1) == 0)) }
+            { "contact", new Variable(new JValue(new Random().Next(0, 2) == 0)) }
         });
     }
 }
