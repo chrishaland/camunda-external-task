@@ -19,7 +19,6 @@ camunda
     .AddExternalTask<Tests.IntegrationTests.Handlers.SolveStargateRiddleHandler>()
     .ConfigureHttpClient(client =>
     {
-        client.Timeout = TimeSpan.FromSeconds(Math.Max(ResponseTimeoutInSeconds, retryPolicyTimeoutInSeconds) + 1);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", 
             Convert.ToBase64String(Encoding.UTF8.GetBytes("demo:demo")));
     })
