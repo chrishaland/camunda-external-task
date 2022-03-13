@@ -5,3 +5,4 @@ global using System.Linq;
 
 using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Tests.UnitTests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

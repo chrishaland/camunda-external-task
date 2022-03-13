@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json.Linq;
 
 namespace Tests.UnitTests.ConfigureServicesTests;
 
+[ExcludeFromCodeCoverage]
 public class Test1TaskHandler : ExternalTaskHandler
 {
     public override string Topic => "test1";

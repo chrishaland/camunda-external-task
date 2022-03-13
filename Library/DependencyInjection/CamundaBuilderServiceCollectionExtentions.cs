@@ -42,34 +42,28 @@ public class CamundaOptions
     /// <summary>
     /// An unique id for this external task worker
     /// </summary>
-    public string WorkerId { get; set; } = string.Empty;
+    public virtual string WorkerId { get; set; } = string.Empty;
 
     /// <summary>
     /// The uri for the Camunda REST Engine
     /// </summary>
-    public string Uri { get; set; } = string.Empty;
+    public virtual string Uri { get; set; } = string.Empty;
 
     /// <summary>
     /// Time to wait for external tasks from Camunda. 
     /// <br/>Default: 30
     /// </summary>
-    public int ResponseTimeoutInSeconds { get; set; } = 30;
+    public virtual int ResponseTimeoutInSeconds { get; set; } = 30;
 
     /// <summary>
     /// Maximum number of tasks to process at a time. 
     /// <br/>Default: 100
     /// </summary>
-    public int MaximumTasks { get; set; } = 100;
+    public virtual int MaximumTasks { get; set; } = 100;
 
     /// <summary>
     /// Should Camunda return tasks based on their priority? 
     /// <br/>Default: true
     /// </summary>
-    public bool ProcessTasksBasedOnPriority { get; set; } = true;
-
-    /// <summary>
-    /// Number of retries to attempt for unsuccessful http requests in an exponential backoff policy
-    /// <br/>Default: 6
-    /// </summary>
-    public int DefaultRetryPolicyNumberOfRetries { get; set; } = 6;
+    public virtual bool ProcessTasksBasedOnPriority { get; set; } = true;
 }

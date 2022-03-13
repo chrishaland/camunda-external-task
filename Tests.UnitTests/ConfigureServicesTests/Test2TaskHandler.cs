@@ -1,5 +1,8 @@
-﻿namespace Tests.UnitTests.ConfigureServicesTests;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace Tests.UnitTests.ConfigureServicesTests;
+
+[ExcludeFromCodeCoverage]
 public class Test2TaskHandler : ExternalTaskHandler
 {
     public override string Topic => "test2";

@@ -22,8 +22,10 @@ sequenceDiagram
                 c->>n: 
             else failure
                 n->>c: external-task/{id}/failure
+                c->>n: 
             else bpmn error
                 n->>c: external-task/{id}/bpmnError
+                c->>n: 
             end
         end
     end
@@ -34,7 +36,7 @@ sequenceDiagram
 Add a reference to the Nuget package for your project. Either using the Nuget solution explorer in Visual Studio or using the `dotnet` CLI:
 
 ```
-> dotnet add package Haland.CamundaExternalTask
+dotnet add package Haland.CamundaExternalTask
 ```
 
 The code example below uses top-level statements (introduced in C# 10) to register a Camunda external task background service with an external task handler.
@@ -83,7 +85,7 @@ public class SimpleTaskHandler : ExternalTaskHandler
 You can configure the Camunda HTTP client and message handler from the `ICamundaBuilder`. In the example above, we provide basic authentication for the client. Below follows an example adding a [Polly](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly) HTTP policy for the Camunda HTTP client:
 
 ```
-> dotnet add package Polly
+dotnet add package Polly
 ```
 
 ```
