@@ -5,6 +5,8 @@
 [![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/chrishaland/camunda-external-task/8/main)](https://chrishaland.visualstudio.com/camunda-external-task/_build/latest?definitionId=8&branchName=main)
 ![Nuget](https://img.shields.io/nuget/v/Haland.CamundaExternalTask)
 ![Nuget](https://img.shields.io/nuget/dt/Haland.CamundaExternalTask)
+<!-- [![Known Vulnerabilities](https://snyk.io/test/github/chrishaland/camunda-external-task/badge.svg)](https://snyk.io/test/github/chrishaland/camunda-external-task) | Add when .NET projects are supported https://snyk.io/docs/badges/ -->
+![GitHub](https://img.shields.io/github/license/chrishaland/camunda-external-task)
 
 This project aims to implement the [Camunda](https://camunda.com/) external task pattern, allowing external applications (in this case, a .NET application) to execute [BPMN activities](https://camunda.com/bpmn/reference/#activities).
 
