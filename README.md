@@ -87,6 +87,7 @@ You can configure the Camunda HTTP client and message handler from the `ICamunda
 ```
 
 ```
+using Haland.CamundaExternalTask;
 using Polly;
 using Polly.Extensions.Http;
 using System.Net.Http.Headers;
