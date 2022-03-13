@@ -40,6 +40,7 @@ Add a reference to the Nuget package for your project. Either using the Nuget so
 The code example below uses top-level statements (introduced in C# 10) to register a Camunda external task background service with an external task handler.
 
 ```
+using Haland.CamundaExternalTask;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -63,7 +64,7 @@ camunda
 var app = builder.Build();
 app.Run();
 
-public class SimpleTaskHandler : Haland.CamundaExternalTask.ExternalTaskHandler
+public class SimpleTaskHandler : ExternalTaskHandler
 {
     public override string Topic => "simpleTask";
 
