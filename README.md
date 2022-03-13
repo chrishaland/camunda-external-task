@@ -3,10 +3,10 @@
 [![Azure DevOps builds (branch)](https://img.shields.io/azure-devops/build/chrishaland/camunda-external-task/8/main)](https://chrishaland.visualstudio.com/camunda-external-task/_build/latest?definitionId=8&branchName=main)
 [![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/chrishaland/camunda-external-task/8/main)](https://chrishaland.visualstudio.com/camunda-external-task/_build/latest?definitionId=8&branchName=main)
 [![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/chrishaland/camunda-external-task/8/main)](https://chrishaland.visualstudio.com/camunda-external-task/_build/latest?definitionId=8&branchName=main)
-![Nuget](https://img.shields.io/nuget/v/Haland.CamundaExternalTask)
-![Nuget](https://img.shields.io/nuget/dt/Haland.CamundaExternalTask)
+[![Nuget](https://img.shields.io/nuget/v/Haland.CamundaExternalTask)](https://www.nuget.org/packages/Haland.CamundaExternalTask/)
+[![Nuget](https://img.shields.io/nuget/dt/Haland.CamundaExternalTask)](https://www.nuget.org/packages/Haland.CamundaExternalTask/)
+[![GitHub](https://img.shields.io/github/license/chrishaland/camunda-external-task)](https://github.com/chrishaland/camunda-external-task/blob/main/LICENSE)
 <!-- [![Known Vulnerabilities](https://snyk.io/test/github/chrishaland/camunda-external-task/badge.svg)](https://snyk.io/test/github/chrishaland/camunda-external-task) | Add when .NET projects are supported https://snyk.io/docs/badges/ -->
-![GitHub](https://img.shields.io/github/license/chrishaland/camunda-external-task)
 
 This project aims to implement the [Camunda](https://camunda.com/) external task pattern, allowing external applications (in this case, a .NET application) to execute [BPMN activities](https://camunda.com/bpmn/reference/#activities).
 
@@ -47,6 +47,7 @@ The code example below uses top-level statements (introduced in C# 10) to regist
 
 ```
 using Haland.CamundaExternalTask;
+using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -80,7 +81,9 @@ public class SimpleTaskHandler : ExternalTaskHandler
 
         return new ExternalTaskCompleteResult(new Dictionary<string, Variable>
         {
-            { "simpleTaskResult", new Variable("success") }
+            { "simpleTaskResult", new Variable(
+                Value: new JValue("success")
+            )}
         });
     }
 }
