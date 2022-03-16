@@ -8,26 +8,26 @@ internal class ExternalTaskManager
     private readonly CamundaOptions _options;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ExternalTaskManager> _logger;
+    private readonly IEnumerable<IExternalTaskHandler> _handlers;
 
     public ExternalTaskManager(
         ILogger<ExternalTaskManager> logger, 
         IExternalTaskClient client, 
-        CamundaOptions options, 
+        CamundaOptions options,
+        IEnumerable<IExternalTaskHandler> handlers,
         IServiceProvider serviceProvider
     )
     {
         _logger = logger;
         _client = client;
         _options = options;
+        _handlers = handlers;
         _serviceProvider = serviceProvider;
     }
     
     internal async Task Execute(CancellationToken ct)
     {
-        using var scope = _serviceProvider.CreateScope();
-        var externalTaskHandlers = scope.ServiceProvider.GetRequiredService<IEnumerable<IExternalTaskHandler>>();
-
-        var topics = externalTaskHandlers.Select(handler => new FetchExternalTaskTopicDto
+        var topics = _handlers.Select(handler => new FetchExternalTaskTopicDto
         {
             TopicName = handler.Topic,
             Variables = handler.Variables,
@@ -43,18 +43,18 @@ internal class ExternalTaskManager
         var externalTaskExecutions = new List<Task>();
         foreach (var task in tasks)
         {
-            var handler = externalTaskHandlers.FirstOrDefault(h => h.Topic == task.TopicName);
-            externalTaskExecutions.Add(ExecuteExternalTask(task, handler, ct));
+            var handler = _handlers.FirstOrDefault(h => h.Topic == task.TopicName);
+            externalTaskExecutions.Add(ExecuteExternalTask(handler?.GetType(), task, ct));
         }
         
         await Task.WhenAll(externalTaskExecutions);
     }
 
-    private async Task ExecuteExternalTask(LockedExternalTaskDto task, IExternalTaskHandler? handler, CancellationToken cancellationToken)
+    private async Task ExecuteExternalTask(Type? externalTaskHandlerType, LockedExternalTaskDto task, CancellationToken cancellationToken)
     {
         try
         {
-            if (handler == null)
+            if (externalTaskHandlerType == null)
             {
                 await NotifyTaskExecutionResult(task, new ExternalTaskFailureResult(
                     ErrorMessage: $"No handler found for topic '{task.TopicName}'",
@@ -79,19 +79,22 @@ internal class ExternalTaskManager
             );
 
             ExternalTaskResult result;
+            var lockDuration = 0;
             var cts = new CancellationTokenSource();
 
             try
             {
+                using var scope = _serviceProvider.CreateScope();
+                var handler = (IExternalTaskHandler) scope.ServiceProvider.GetRequiredService(externalTaskHandlerType);
                 result = await handler.Execute(externalTask, cts.Token)
-                    .WithTimeout(TimeSpan.FromMilliseconds(handler.LockDuration));
+                    .WithTimeout(TimeSpan.FromMilliseconds(lockDuration = handler.LockDuration));
             }
             catch(TimeoutException)
             {
                 cts.Cancel();
                 result = new ExternalTaskFailureResult(
                     ErrorMessage: "The task execution timed out", 
-                    ErrorDetails: $"The task execution did not complete within the lock duration of {handler.LockDuration} milliseconds"
+                    ErrorDetails: $"The task execution did not complete within the lock duration of {lockDuration} milliseconds"
                 );
             }
 

@@ -11,15 +11,23 @@ public class ExternalTaskManagerTests
     private static readonly ILogger<ExternalTaskManager> _logger = new LoggerFactory()
         .CreateLogger<ExternalTaskManager>();
 
-    private static readonly IServiceProvider _serviceProvider = new ServiceCollection()
-        .AddScoped<IExternalTaskHandler, CompleteExternalTaskHandler>()
-        .AddScoped<IExternalTaskHandler, FailureExternalTaskHandler>()
-        .AddScoped<IExternalTaskHandler, BpmnErrorExternalTaskHandler>()
-        .AddScoped<IExternalTaskHandler, TimedOutExternalTaskHandler>()
-        .AddScoped<IExternalTaskHandler, ExceptionExternalTaskHandler>()
-        .BuildServiceProvider();
+    private static readonly ICamundaBuilder _camundaBuilder = new DefaultCamundaBuilder(string.Empty, new ServiceCollection())
+        .AddExternalTask<CompleteExternalTaskHandler>()
+        .AddExternalTask<FailureExternalTaskHandler>()
+        .AddExternalTask<BpmnErrorExternalTaskHandler>()
+        .AddExternalTask<TimedOutExternalTaskHandler>()
+        .AddExternalTask<ExceptionExternalTaskHandler>()
+    ;
 
-    private readonly ExternalTaskManager _sut = new(_logger, _client.Object, _options.Object, _serviceProvider);
+    private static readonly IServiceProvider _serviceProvider = _camundaBuilder.Services.BuildServiceProvider();
+
+    private readonly ExternalTaskManager _sut = new(
+        logger: _logger, 
+        client: _client.Object, 
+        options: _options.Object, 
+        handlers: _serviceProvider.GetRequiredService<IEnumerable<IExternalTaskHandler>>(), 
+        serviceProvider: _serviceProvider
+    );
 
     [SetUp]
     public void Before()
