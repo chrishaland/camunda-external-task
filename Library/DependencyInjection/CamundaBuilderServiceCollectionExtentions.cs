@@ -32,7 +32,8 @@ public static class CamundaBuilderServiceCollectionExtentions
 
     public static ICamundaBuilder AddExternalTask<T>(this ICamundaBuilder builder) where T : ExternalTaskHandler
     {
-        builder.Services.AddScoped<IExternalTaskHandler, T>();
+        builder.Services.AddScoped<T>();
+        builder.Services.AddSingleton<IExternalTaskHandler, T>();
         return builder;
     }
 }
