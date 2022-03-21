@@ -8,7 +8,7 @@ namespace Tests.UnitTests;
 public class ExternalTaskClientTests
 {
     private static readonly Mock<HttpClient> _httpClient = new();
-    private readonly IExternalTaskClient _sut = new ExternalTaskClient(_httpClient.Object);
+    private readonly ExternalTaskClient _sut = new ExternalTaskClient(_httpClient.Object);
 
     [Test]
     public async Task FetchAndLock_returns_list_of_locked_external_tasks()
@@ -232,5 +232,71 @@ public class ExternalTaskClientTests
 #if NET5_0_OR_GREATER
         Assert.That(exception.StatusCode, Is.EqualTo(statusCode));
 #endif
+    }
+
+    [TestCase(42)]
+    [TestCase(42d)]
+    [TestCase(true)]
+    [TestCase("text")]
+    public void Post_should_be_able_to_serialize_primitive_values(object value)
+    {
+        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
+
+        Assert.DoesNotThrowAsync(() =>
+            _sut.Post(
+                requestUri: "/", 
+                dto: new CompleteExternalTaskDto 
+                {
+                    WorkerId = "worker",
+                    Variables = new Dictionary<string, VariableDto>
+                    {
+                        { "variable", new VariableDto(new JValue(value)) }
+                    }
+                },
+                cancellationToken: CancellationToken.None
+            ));
+    }
+
+    [Test]
+    public void Post_should_be_able_to_serialize_array_values()
+    {
+        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
+
+        Assert.DoesNotThrowAsync(() =>
+            _sut.Post(
+                requestUri: "/",
+                dto: new CompleteExternalTaskDto
+                {
+                    WorkerId = "worker",
+                    Variables = new Dictionary<string, VariableDto>
+                    {
+                        { "variable", new VariableDto(new JArray(new[]{ "1", "2", "3" })) }
+                    }
+                },
+                cancellationToken: CancellationToken.None
+            ));
+    }
+
+    [Test]
+    public void Post_should_be_able_to_serialize_object_values()
+    {
+        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
+
+        Assert.DoesNotThrowAsync(() =>
+            _sut.Post(
+                requestUri: "/",
+                dto: new CompleteExternalTaskDto
+                {
+                    WorkerId = "worker",
+                    Variables = new Dictionary<string, VariableDto>
+                    {
+                        { "variable", new VariableDto(JToken.FromObject(new { a = 1, b = 2, c = 3 })) }
+                    }
+                },
+                cancellationToken: CancellationToken.None
+            ));
     }
 }

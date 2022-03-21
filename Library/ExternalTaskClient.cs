@@ -56,14 +56,14 @@ internal class ExternalTaskClient : IExternalTaskClient
         return result ?? Array.Empty<LockedExternalTaskDto>();
     }
 
-    private async Task<TResponse?> Post<TRequest, TResponse>(string requestUri, TRequest dto, CancellationToken cancellationToken)
+    internal async Task<TResponse?> Post<TRequest, TResponse>(string requestUri, TRequest dto, CancellationToken cancellationToken)
     {
         var content = await Post(requestUri, dto, cancellationToken);
         var result = JsonConvert.DeserializeObject<TResponse>(content);
         return result;
     }
 
-    private async Task<string> Post<TRequest>(string requestUri, TRequest dto, CancellationToken cancellationToken)
+    internal async Task<string> Post<TRequest>(string requestUri, TRequest dto, CancellationToken cancellationToken)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
 
