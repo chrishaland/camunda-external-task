@@ -5,7 +5,7 @@
       <bpmn:outgoing>Flow_1v8188y</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1v8188y" sourceRef="StartEvent_1" targetRef="Activity_1wp1kqs" />
-    <bpmn:exclusiveGateway id="Gateway_1424gl7" name="Catherine Langford contacts Mr. Jackson about secret job">
+    <bpmn:exclusiveGateway id="Gateway_1424gl7" name="Catherine Langford contacts Mr. Jackson about secret job" default="Flow_0caw6gw">
       <bpmn:incoming>Flow_0cd8b59</bpmn:incoming>
       <bpmn:outgoing>Flow_0skvikt</bpmn:outgoing>
       <bpmn:outgoing>Flow_0caw6gw</bpmn:outgoing>
@@ -96,7 +96,7 @@
       <bpmndi:BPMNShape id="Gateway_1424gl7_di" bpmnElement="Gateway_1424gl7" isMarkerVisible="true">
         <dc:Bounds x="425" y="152" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="406" y="88.5" width="88" height="53" />
+          <dc:Bounds x="406" y="89" width="88" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0667zcs_di" bpmnElement="Event_0667zcs">

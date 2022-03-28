@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Xml.Linq;
+using Haland.CamundaExternalTask.DependencyInjection;
+using Newtonsoft.Json.Linq;
 
 namespace Tests.UnitTests;
 
@@ -92,10 +94,10 @@ public class ExternalTaskManagerTests
                 Variables = new Dictionary<string, VariableDto>
                 {
                     { "xml", new VariableDto(
-                        new JValue("<root/>"), 
-                        new ValueInfoDto
+                        Value: new JValue("<root/>"),
+                        Type: null,
+                        ValueInfo: new ValueInfoDto
                         {
-                            ObjectTypeName = "XML",
                             SerializationDataFormat = "xml",
                             FileName = "request.xml",
                             MimeType = "application/xml",
@@ -145,16 +147,7 @@ public class ExternalTaskManagerTests
             await Task.CompletedTask;
             return new ExternalTaskCompleteResult(new Dictionary<string, Variable>()
             {
-                { "xmlResult", new Variable(
-                    Value: new JValue("<result/>"), 
-                    ValueInfo: new ValueInfo(
-                        ObjectTypeName: "XML",
-                        SerializationDataFormat: "xml",
-                        FileName: "result.xml",
-                        MimeType: "application/xml",
-                        Encoding: "utf-8"
-                    ))
-                }
+                { "xmlResult", Variable.From(XDocument.Parse("<result/>")) }
             });
         }
     }

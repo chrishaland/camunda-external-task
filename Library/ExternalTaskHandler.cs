@@ -19,7 +19,7 @@ internal interface IExternalTaskHandler
     /// </summary>
     public int LockDuration { get; }
 
-    public Task<ExternalTaskResult> Execute(ExternalTask externalTask, CancellationToken ct);
+    public Task<ExternalTaskResult> Execute(ExternalTask externalTask, CancellationToken cancellationToken);
 }
 
 public abstract class ExternalTaskHandler : IExternalTaskHandler
@@ -28,5 +28,5 @@ public abstract class ExternalTaskHandler : IExternalTaskHandler
     public virtual string[]? Variables { get; } = null;
     public virtual int LockDuration { get; } = 30000;
 
-    public abstract Task<ExternalTaskResult> Execute(ExternalTask externalTask, CancellationToken ct);
+    public abstract Task<ExternalTaskResult> Execute(ExternalTask externalTask, CancellationToken cancellationToken);
 }

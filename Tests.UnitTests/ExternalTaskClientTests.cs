@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Tests.UnitTests;
@@ -8,7 +7,7 @@ namespace Tests.UnitTests;
 public class ExternalTaskClientTests
 {
     private static readonly Mock<HttpClient> _httpClient = new();
-    private readonly ExternalTaskClient _sut = new ExternalTaskClient(_httpClient.Object);
+    private readonly ExternalTaskClient _sut = new(_httpClient.Object);
 
     [Test]
     public async Task FetchAndLock_returns_list_of_locked_external_tasks()
@@ -49,7 +48,7 @@ public class ExternalTaskClientTests
             Assert.That(response[0].Id, Is.EqualTo(id));
             Assert.That(response[0].TopicName, Is.EqualTo("topic"));
             Assert.That(response[0].WorkerId, Is.EqualTo("worker"));
-            Assert.That(response[0].Variables["var"].Value.ToString(), Is.EqualTo("<root/>"));
+            Assert.That(response[0].Variables["var"].Value?.ToString(), Is.EqualTo("<root/>"));
             Assert.That(response[0].Variables["var"].Type, Is.EqualTo("String"));
 
             var valueInfo = response[0].Variables["var"].ValueInfo ?? new ValueInfoDto();
@@ -93,12 +92,11 @@ public class ExternalTaskClientTests
             Variables = new Dictionary<string, VariableDto>()
         }, CancellationToken.None);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
         _httpClient.Verify(m => m.SendAsync(It.Is<HttpRequestMessage>(r => 
             r.Method == HttpMethod.Post &&
+            r.RequestUri != null &&
             r.RequestUri.ToString().Contains($"/{id}/")
         ), CancellationToken.None), Times.Once());
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
     }
 
     [TestCase(HttpStatusCode.Forbidden)]
@@ -117,8 +115,9 @@ public class ExternalTaskClientTests
             Variables = new Dictionary<string, VariableDto>() 
             {
                 { "var", new VariableDto(
-                    new JValue("value"), 
-                    new ValueInfoDto 
+                    Value: new JValue("value"),
+                    Type: "String",
+                    ValueInfo: new ValueInfoDto 
                     {
                         Encoding = "",
                         FileName = "",
@@ -153,12 +152,11 @@ public class ExternalTaskClientTests
             ErrorMessage = "message"
         }, CancellationToken.None);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
         _httpClient.Verify(m => m.SendAsync(It.Is<HttpRequestMessage>(r =>
             r.Method == HttpMethod.Post &&
+            r.RequestUri != null &&
             r.RequestUri.ToString().Contains($"/{id}/")
         ), CancellationToken.None), Times.Once());
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
     }
 
     [TestCase(HttpStatusCode.Forbidden)]
@@ -201,12 +199,11 @@ public class ExternalTaskClientTests
             ErrorMessage = "message"
         }, CancellationToken.None);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
         _httpClient.Verify(m => m.SendAsync(It.Is<HttpRequestMessage>(r =>
             r.Method == HttpMethod.Post &&
+            r.RequestUri != null &&
             r.RequestUri.ToString().Contains($"/{id}/")
         ), CancellationToken.None), Times.Once());
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
     }
 
     [TestCase(HttpStatusCode.Forbidden)]
@@ -234,11 +231,11 @@ public class ExternalTaskClientTests
 #endif
     }
 
-    [TestCase(42)]
-    [TestCase(42d)]
-    [TestCase(true)]
-    [TestCase("text")]
-    public void Post_should_be_able_to_serialize_primitive_values(object value)
+    [TestCase(42, "Integer")]
+    [TestCase(42d, "Double")]
+    [TestCase(true, "Boolean")]
+    [TestCase("text", "String")]
+    public void Post_should_be_able_to_serialize_primitive_values(object value, string type)
     {
         _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
@@ -251,7 +248,11 @@ public class ExternalTaskClientTests
                     WorkerId = "worker",
                     Variables = new Dictionary<string, VariableDto>
                     {
-                        { "variable", new VariableDto(new JValue(value)) }
+                        { "variable", new VariableDto(
+                            Value: new JValue(value), 
+                            Type: type, 
+                            ValueInfo: new ValueInfoDto()) 
+                        }
                     }
                 },
                 cancellationToken: CancellationToken.None
@@ -272,7 +273,11 @@ public class ExternalTaskClientTests
                     WorkerId = "worker",
                     Variables = new Dictionary<string, VariableDto>
                     {
-                        { "variable", new VariableDto(new JArray(new[]{ "1", "2", "3" })) }
+                        { "variable", new VariableDto(
+                            Value: new JArray(new[]{ "1", "2", "3" }), 
+                            Type: null, 
+                            ValueInfo: new ValueInfoDto())
+                        }
                     }
                 },
                 cancellationToken: CancellationToken.None
@@ -293,7 +298,11 @@ public class ExternalTaskClientTests
                     WorkerId = "worker",
                     Variables = new Dictionary<string, VariableDto>
                     {
-                        { "variable", new VariableDto(JToken.FromObject(new { a = 1, b = 2, c = 3 })) }
+                        { "variable", new VariableDto(
+                            Value: JToken.FromObject(new { a = 1, b = 2, c = 3 }), 
+                            Type: null, 
+                            ValueInfo: new ValueInfoDto())
+                        }
                     }
                 },
                 cancellationToken: CancellationToken.None

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Haland.CamundaExternalTask.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.Testing;
 #if !NET6_0_OR_GREATER
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
