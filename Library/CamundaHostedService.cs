@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Haland.CamundaExternalTask.DependencyInjection;
 
 namespace Haland.CamundaExternalTask;
 
@@ -19,17 +20,17 @@ internal class CamundaHostedService : BackgroundService
         _externalTaskManager = externalTaskManager;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken ct)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         // Release the background service from blocking the host startup process
         await Task.Yield();
 
-        while (!ct.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
-                await _externalTaskManager.Execute(ct);
-                await Task.Delay(100, ct);
+                await _externalTaskManager.Execute(cancellationToken);
+                await Task.Delay(100, cancellationToken);
             }
             catch (Exception ex) 
             {

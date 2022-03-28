@@ -47,6 +47,7 @@ The code example below uses top-level statements (introduced in C# 10) to regist
 
 ```
 using Haland.CamundaExternalTask;
+using Haland.CamundaExternalTask.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -81,9 +82,7 @@ public class SimpleTaskHandler : ExternalTaskHandler
 
         return new ExternalTaskCompleteResult(new Dictionary<string, Variable>
         {
-            { "simpleTaskResult", new Variable(
-                Value: new JValue("success")
-            )}
+            { "simpleTaskResult", Variable.From("success") }
         });
     }
 }
@@ -97,6 +96,7 @@ dotnet add package Polly
 
 ```
 using Haland.CamundaExternalTask;
+using Haland.CamundaExternalTask.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 using System.Net.Http.Headers;

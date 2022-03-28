@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json.Linq;
 
 namespace Tests.UnitTests.ConfigureServicesTests;
 
@@ -13,19 +12,7 @@ public class Test1TaskHandler : ExternalTaskHandler
         await Task.CompletedTask;
         return new ExternalTaskCompleteResult(new Dictionary<string, Variable>
         {
-            {
-                "var", 
-                new Variable(
-                    Value: new JValue("value"), 
-                    ValueInfo: new ValueInfo(
-                        ObjectTypeName: "",
-                        SerializationDataFormat: "",
-                        FileName: "file.pdf",
-                        MimeType: "application/pdf",
-                        Encoding: "utf-8"
-                    )
-                ) 
-            }
+            { "var", Variable.From("value") }
         });
     }
 }

@@ -211,18 +211,7 @@ internal class BpmnErrorExternalTaskDto
     public string ErrorMessage { get; set; } = default!;
 }
 
-internal class VariableDto
-{
-    public VariableDto(JToken value, ValueInfoDto? valueInfo = null)
-    {
-        Value = value;
-        ValueInfo = valueInfo;
-    }
-
-    public JToken Value { get; set; }
-    public string Type { get => Value.Type.ToString(); }
-    public ValueInfoDto? ValueInfo { get; set; }
-}
+internal record VariableDto(JToken? Value, string? Type, ValueInfoDto ValueInfo);
 
 internal class ValueInfoDto
 {

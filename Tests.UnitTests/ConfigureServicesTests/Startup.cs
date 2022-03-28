@@ -1,4 +1,6 @@
 ﻿#if NETCOREAPP3_1 || NET5_0
+using Haland.CamundaExternalTask.DependencyInjection;
+
 namespace Tests.UnitTests.ConfigureServicesTests;
 
 public class Startup

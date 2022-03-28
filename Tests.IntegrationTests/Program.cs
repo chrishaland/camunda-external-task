@@ -1,4 +1,5 @@
-﻿using Polly;
+﻿using Haland.CamundaExternalTask.DependencyInjection;
+using Polly;
 using Polly.Extensions.Http;
 using System.Net.Http.Headers;
 using System.Text;

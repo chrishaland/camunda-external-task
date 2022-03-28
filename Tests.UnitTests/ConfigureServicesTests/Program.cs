@@ -1,4 +1,6 @@
 ﻿#if NET6_0_OR_GREATER
+using Haland.CamundaExternalTask.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var camunda = builder.Services.AddCamunda(options =>

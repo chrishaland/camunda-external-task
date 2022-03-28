@@ -1,4 +1,4 @@
-﻿namespace Haland.CamundaExternalTask;
+﻿namespace Haland.CamundaExternalTask.DependencyInjection;
 
 public interface ICamundaBuilder : IHttpClientBuilder { }
 
