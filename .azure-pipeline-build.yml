@@ -28,14 +28,14 @@ stages:
   jobs: 
   - template: .azure-pipeline-templates/.dotnet-test.yml
     parameters:
-      project: 'Tests.UnitTests'
+      project: 'Tests'
   - template: .azure-pipeline-templates/.dotnet-test.yml
     parameters:
       sdk: '5.0'
       framework: 'net5.0'
-      project: 'Tests.UnitTests'
+      project: 'Tests'
   - template: .azure-pipeline-templates/.dotnet-test.yml
     parameters:
       sdk: '3.1'
       framework: 'netcoreapp3.1'
-      project: 'Tests.UnitTests'
+      project: 'Tests'
