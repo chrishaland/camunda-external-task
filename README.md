@@ -76,7 +76,7 @@ public class SimpleTaskHandler : ExternalTaskHandler
 {
     public override string Topic => "simpleTask";
 
-    public override async Task<ExternalTaskResult> Execute(ExternalTask externalTask, CancellationToken ct)
+    public override async Task<ExternalTaskResult> Execute(ExternalTask externalTask, CancellationToken cancellationToken)
     {
         await Task.CompletedTask;
 
