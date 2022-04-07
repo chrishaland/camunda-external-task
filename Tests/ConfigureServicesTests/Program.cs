@@ -13,13 +13,21 @@ camunda
     .AddExternalTask<Tests.UnitTests.ConfigureServicesTests.Test1TaskHandler>()
     .AddExternalTask<Tests.UnitTests.ConfigureServicesTests.Test2TaskHandler>()
     .AddExternalTask<Tests.UnitTests.ConfigureServicesTests.Test3TaskHandler>()
-    .ConfigurePrimaryHttpMessageHandler(_ => new Mock<HttpMessageHandler>().Object)
+    .ConfigurePrimaryHttpMessageHandler(_ => 
+    {
+        var mock = new Mock<HttpMessageHandler>();
+        mock.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent("[]") });
+        return mock.Object;        
+    })
 ;
 
 var app = builder.Build();
 app.Run();
 
 #pragma warning disable CA1050 // Declare types in namespaces
+[ExcludeFromCodeCoverage]
 public partial class Program { }
 #pragma warning restore CA1050 // Declare types in namespaces
 #endif
