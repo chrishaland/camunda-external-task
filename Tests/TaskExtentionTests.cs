@@ -1,4 +1,4 @@
-﻿namespace Tests.UnitTests;
+﻿namespace Tests;
 
 [TestFixture]
 public class TaskExtentionTests

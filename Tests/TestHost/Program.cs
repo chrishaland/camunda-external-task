@@ -10,9 +10,9 @@ var camunda = builder.Services.AddCamunda(options =>
 });
 
 camunda
-    .AddExternalTask<Tests.UnitTests.ConfigureServicesTests.Test1TaskHandler>()
-    .AddExternalTask<Tests.UnitTests.ConfigureServicesTests.Test2TaskHandler>()
-    .AddExternalTask<Tests.UnitTests.ConfigureServicesTests.Test3TaskHandler>()
+    .AddExternalTask<Test1TaskHandler>()
+    .AddExternalTask<Test2TaskHandler>()
+    .AddExternalTask<Test3TaskHandler>()
     .ConfigurePrimaryHttpMessageHandler(_ => 
     {
         var mock = new Mock<HttpMessageHandler>();

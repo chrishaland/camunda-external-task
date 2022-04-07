@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 #endif
 
-namespace Tests.UnitTests.ConfigureServicesTests;
+namespace Tests;
 
 [TestFixture]
 public partial class ConfigureServicesTests

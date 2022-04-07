@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Tests.UnitTests.ConfigureServicesTests;
+﻿namespace Tests.TestHost;
 
 [ExcludeFromCodeCoverage]
 public class Test1TaskHandler : ExternalTaskHandler
