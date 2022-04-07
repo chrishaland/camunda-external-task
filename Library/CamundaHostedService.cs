@@ -22,9 +22,6 @@ internal class CamundaHostedService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        // Release the background service from blocking the host startup process
-        await Task.Yield();
-
         while (!cancellationToken.IsCancellationRequested)
         {
             try
@@ -34,7 +31,9 @@ internal class CamundaHostedService : BackgroundService
             }
             catch (Exception ex) 
             {
-                _logger.LogError(ex, "An unexpected error occurred while processing Camunda external tasks for worker {workerId}. " +
+                if (cancellationToken.IsCancellationRequested && ex is TaskCanceledException) return;
+
+                _logger.LogError(ex, "An unexpected error occurred while processing Camunda external tasks for worker '{workerId}'. " +
                     "Error message: {errorMessage}", _options.WorkerId, ex.Message);
             }
         }
