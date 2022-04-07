@@ -17,7 +17,14 @@ public class Startup
             .AddExternalTask<Test1TaskHandler>()
             .AddExternalTask<Test2TaskHandler>()
             .AddExternalTask<Test3TaskHandler>()
-            .ConfigurePrimaryHttpMessageHandler(_ => new Mock<HttpMessageHandler>().Object)
+            .ConfigurePrimaryHttpMessageHandler(_ => 
+            {
+                var mock = new Mock<HttpMessageHandler>();
+                mock.Protected()
+                    .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                    .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent("[]") });
+                return mock.Object;        
+            })
         ;
     }
 

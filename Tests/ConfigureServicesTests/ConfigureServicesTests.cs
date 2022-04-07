@@ -67,7 +67,6 @@ public partial class ConfigureServicesTests
     WebApplicationFactory<Program>? _application = null;
 }
 #else
-
 public partial class ConfigureServicesTests
 {
     TestWebApplicationFactory<Startup>? _application = null;
