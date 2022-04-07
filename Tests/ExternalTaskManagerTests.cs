@@ -2,7 +2,7 @@
 using Haland.CamundaExternalTask.DependencyInjection;
 using Newtonsoft.Json.Linq;
 
-namespace Tests.UnitTests;
+namespace Tests;
 
 [TestFixture]
 public class ExternalTaskManagerTests

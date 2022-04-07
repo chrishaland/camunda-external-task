@@ -7,3 +7,4 @@ global using Moq.Protected;
 global using NUnit.Framework;
 global using System.Diagnostics.CodeAnalysis;
 global using System.Net;
+global using Tests.TestHost;

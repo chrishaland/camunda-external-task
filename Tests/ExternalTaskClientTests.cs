@@ -1,7 +1,6 @@
-﻿using System.Net;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 
-namespace Tests.UnitTests;
+namespace Tests;
 
 [TestFixture]
 public class ExternalTaskClientTests
