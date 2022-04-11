@@ -131,8 +131,8 @@ app.Run();
 
 ## Development
 
-Start by downloading and installing [Camunda Platform Run](https://camunda.com/download/) and [Camunda Modeler](https://camunda.com/download/modeler/). Upload the [BPMN](https://www.bpmn.org/) models in `./Tests.IntegrationTests/Models/` to your instance of `Camunda Platform Run` using `Camunda Modeler`.
+Start by downloading and installing [Camunda Platform Run](https://camunda.com/download/) and [Camunda Modeler](https://camunda.com/download/modeler/). Upload the [BPMN](https://www.bpmn.org/) models in `./Samples/Models/` to your instance of `Camunda Platform Run` using `Camunda Modeler`.
 
-The `Tests.IntegrationTests` project is an application for testing the External Task library from this project. It is configured to connect to the default configuration for `Camunda Platform Run`.
+The `Samples` project is a sample application for testing the External Task library from this project. It is configured to connect to the default configuration for `Camunda Platform Run`.
 
 Run the application and start a new process instance for the `Pyramids as landing platforms theory` process definition, using the `Camunda Tasklist`. You'll see the application executing the external tasks defined in the process definition.
