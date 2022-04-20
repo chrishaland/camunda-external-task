@@ -1,4 +1,6 @@
-﻿namespace Haland.CamundaExternalTask.DependencyInjection;
+﻿using System.Threading.Channels;
+
+namespace Haland.CamundaExternalTask.DependencyInjection;
 
 public static class CamundaBuilderServiceCollectionExtentions
 {
@@ -24,8 +26,14 @@ public static class CamundaBuilderServiceCollectionExtentions
         });
 
         services.AddSingleton(options);
-        services.AddSingleton<ExternalTaskManager>();
-        services.AddHostedService<CamundaHostedService>();
+        services.AddSingleton<IChannel>(new Channel(options.MaximumTasks));
+
+        services.AddHostedService<FetcherService>();
+        
+        for (var i = 0; i < options.MaximumTasks; i++)
+        {
+            services.AddSingleton<IHostedService, ManagerService>();
+        }
 
         return new DefaultCamundaBuilder(httpClientBuilder.Name, httpClientBuilder.Services);
     }
