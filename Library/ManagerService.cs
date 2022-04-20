@@ -3,18 +3,20 @@ using Haland.CamundaExternalTask.DependencyInjection;
 
 namespace Haland.CamundaExternalTask;
 
-internal class ExternalTaskManager
+internal class ManagerService : BackgroundService
 {
-    private readonly IExternalTaskClient _client;
+    private readonly IChannel _channel;
     private readonly CamundaOptions _options;
+    private readonly IExternalTaskClient _client;
+    private readonly ILogger<ManagerService> _logger;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<ExternalTaskManager> _logger;
     private readonly IEnumerable<IExternalTaskHandler> _handlers;
 
-    public ExternalTaskManager(
-        ILogger<ExternalTaskManager> logger, 
-        IExternalTaskClient client, 
+    public ManagerService(
+        IChannel channel,
         CamundaOptions options,
+        IExternalTaskClient client,
+        ILogger<ManagerService> logger,
         IEnumerable<IExternalTaskHandler> handlers,
         IServiceProvider serviceProvider
     )
@@ -22,33 +24,39 @@ internal class ExternalTaskManager
         _logger = logger;
         _client = client;
         _options = options;
+        _channel = channel;
         _handlers = handlers;
         _serviceProvider = serviceProvider;
     }
-    
-    internal async Task Execute(CancellationToken cancellationToken)
+
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        var topics = _handlers.Select(handler => new FetchExternalTaskTopicDto
+        while (!cancellationToken.IsCancellationRequested)
         {
-            TopicName = handler.Topic,
-            Variables = handler.Variables,
-            LockDuration = handler.LockDuration
-        });
-
-        _logger.LogInformation("Getting external tasks to execute for topics '{@topics}'", topics.Select(t => t.TopicName));
-        
-        var tasks = await GetExternalTasksToExecute(topics.ToArray(), cancellationToken);
-        
-        _logger.LogInformation("Got {externalTaskCount} external tasks to execute: {@tasks}", tasks.Count(), tasks.Select(t => new { TaskId = t.Id, Topic = t.TopicName }));
-
-        var externalTaskExecutions = new List<Task>();
-        foreach (var task in tasks)
-        {
-            var handler = _handlers.FirstOrDefault(h => h.Topic == task.TopicName);
-            externalTaskExecutions.Add(ExecuteExternalTask(handler?.GetType(), task, cancellationToken));
+            await ExecuteExternalTask(cancellationToken);
         }
-        
-        await Task.WhenAll(externalTaskExecutions);
+    }
+
+    internal async Task ExecuteExternalTask(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var task = await _channel.Read(cancellationToken);
+
+            var handler = _handlers.FirstOrDefault(h => h.Topic == task.TopicName);
+            await ExecuteExternalTask(handler?.GetType(), task, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            if (cancellationToken.IsCancellationRequested && ex is TaskCanceledException) return;
+
+            _logger.LogError(ex, "An unexpected error occurred while processing Camunda external tasks for worker '{workerId}'. " +
+                "Error message: {errorMessage}", _options.WorkerId, ex.Message);
+        }
+        finally
+        {
+            _channel.Release();
+        }
     }
 
     private async Task ExecuteExternalTask(Type? externalTaskHandlerType, LockedExternalTaskDto task, CancellationToken cancellationToken)
@@ -64,9 +72,11 @@ internal class ExternalTaskManager
                 return;
             }
 
+            _logger.LogInformation("Processing external task for process instance '{ProcessInstanceId}'", task.Id);
+
             var externalTask = new ExternalTask(
-                Id: task.Id, 
-                WorkerId: task.WorkerId, 
+                Id: task.Id,
+                WorkerId: task.WorkerId,
                 Variables: task.Variables.ToDictionary((kv) => kv.Key, kv => Variable.From(kv.Value))
             );
 
@@ -77,15 +87,15 @@ internal class ExternalTaskManager
             try
             {
                 using var scope = _serviceProvider.CreateScope();
-                var handler = (IExternalTaskHandler) scope.ServiceProvider.GetRequiredService(externalTaskHandlerType);
+                var handler = (IExternalTaskHandler)scope.ServiceProvider.GetRequiredService(externalTaskHandlerType);
                 result = await handler.Execute(externalTask, cts.Token)
                     .WithTimeout(TimeSpan.FromMilliseconds(lockDuration = handler.LockDuration));
             }
-            catch(TimeoutException)
+            catch (TimeoutException)
             {
                 cts.Cancel();
                 result = new ExternalTaskFailureResult(
-                    ErrorMessage: "The task execution timed out", 
+                    ErrorMessage: "The task execution timed out",
                     ErrorDetails: $"The task execution did not complete within the lock duration of {lockDuration} milliseconds"
                 );
             }
@@ -120,7 +130,7 @@ internal class ExternalTaskManager
                 Variables = completeResult.Variables?.ToDictionary((kv) => kv.Key, kv => new VariableDto(
                     Value: kv.Value.Token,
                     Type: kv.Value.Type,
-                    ValueInfo: new ValueInfoDto 
+                    ValueInfo: new ValueInfoDto
                     {
                         Encoding = kv.Value.ValueInfo?.Encoding,
                         FileName = kv.Value.ValueInfo?.FileName,
@@ -140,20 +150,5 @@ internal class ExternalTaskManager
                 ErrorMessage = bpmnErrorResult.ErrorMessage
             }, cancellationToken);
         }
-    }
-
-    private async Task<IEnumerable<LockedExternalTaskDto>> GetExternalTasksToExecute(FetchExternalTaskTopicDto[] topics, CancellationToken cancellationToken)
-    {
-        var request = new FetchExternalTasksDto
-        {
-            WorkerId = _options.WorkerId,
-            MaxTasks = _options.MaximumTasks,
-            UsePriority = _options.ProcessTasksBasedOnPriority,
-            AsyncResponseTimeout = _options.ResponseTimeoutInSeconds * 1000,
-            Topics = topics
-        };
-
-        var response = await _client.FetchAndLock(request, cancellationToken);
-        return response ?? Enumerable.Empty<LockedExternalTaskDto>();
     }
 }

@@ -12,25 +12,31 @@ This project aims to implement the [Camunda](https://camunda.com/) external task
 
 The workflow roughly looks like the diagram below. However, note that the lock period is specified per topic, as some tasks may take longer to complete than others.
 
+This framework starts a single `fetcher` service, that fetches external tasks from Camunda. It also starts as many `manager` services as the `MaximumTasks` value specifies (default: 100). Each time the `fetcher` service fetches tasks from Camunda, it asks for a maximum of "number of available `manager` services" tasks. A `manager` serivce is available when it is not executing a task. This way, long running task types does not prevent the framework from fetching new tasks, as long as it has the capacity.
+
 ```mermaid
 sequenceDiagram
-    participant n as .NET application
+    participant f as Fetcher service
+    participant ch as Channel
+    participant m as Manager service
     participant c as Camunda
     loop
-        n->>c: external-task/fetchAndLock(topics, lock period)
-        c->>n: Locked external tasks
-        loop Locked external tasks
-            n->>n: Execute task
-            alt success
-                n->>c: external-task/{id}/complete
-                c->>n: 
-            else failure
-                n->>c: external-task/{id}/failure
-                c->>n: 
-            else bpmn error
-                n->>c: external-task/{id}/bpmnError
-                c->>n: 
-            end
+        f->>c: external-task/fetchAndLock(topics, lock period, maximum tasks)
+        c->>f: locked external tasks
+        f->>ch: write(locked external tasks)
+    end
+    par each manager service
+        ch->>m: read(locked external task)
+        m->>m: Execute task
+        alt success
+            m->>c: external-task/{id}/complete
+            c->>m: 
+        else failure
+            m->>c: external-task/{id}/failure
+            c->>m: 
+        else bpmn error
+            m->>c: external-task/{id}/bpmnError
+            c->>m: 
         end
     end
 ```
@@ -88,47 +94,6 @@ public class SimpleTaskHandler : ExternalTaskHandler
 }
 ```
 
-You can configure the Camunda HTTP client and message handler from the `ICamundaBuilder`. In the example above, we provide basic authentication for the client. Below follows an example adding a [Polly](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly) HTTP policy for the Camunda HTTP client:
-
-```
-dotnet add package Polly
-```
-
-```
-using Haland.CamundaExternalTask;
-using Haland.CamundaExternalTask.DependencyInjection;
-using Polly;
-using Polly.Extensions.Http;
-using System.Net.Http.Headers;
-using System.Text;
-
-var builder = WebApplication.CreateBuilder(args);
-
-var camunda = builder.Services.AddCamunda(options =>
-{
-    options.WorkerId = "<worker_id>";
-    options.Uri = "http://localhost:8080/engine-rest/";
-});
-
-camunda
-    .ConfigureHttpClient(client =>
-    {
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", 
-            Convert.ToBase64String(Encoding.UTF8.GetBytes("<username>:<password>")));
-    })
-    .SetHandlerLifetime(TimeSpan.FromSeconds(30)); // Should probably be long enough to handle all retries with the same message handler?
-    .AddPolicyHandler(HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .WaitAndRetryAsync(
-            retryCount: 6,
-            sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
-        ))
-;
-
-var app = builder.Build();
-app.Run();
-```
-
 ## Development
 
 Start by downloading and installing [Camunda Platform Run](https://camunda.com/download/) and [Camunda Modeler](https://camunda.com/download/modeler/). Upload the [BPMN](https://www.bpmn.org/) models in `./Samples/Models/` to your instance of `Camunda Platform Run` using `Camunda Modeler`.
@@ -136,3 +101,17 @@ Start by downloading and installing [Camunda Platform Run](https://camunda.com/d
 The `Samples` project is a sample application for testing the External Task library from this project. It is configured to connect to the default configuration for `Camunda Platform Run`.
 
 Run the application and start a new process instance for the `Pyramids as landing platforms theory` process definition, using the `Camunda Tasklist`. You'll see the application executing the external tasks defined in the process definition.
+
+### Getting started with process instances
+
+Start 100 process instances:
+
+```
+$credential = Get-Credential; @(1..100) | %{Invoke-RestMethod -Method Post -Uri "http://localhost:8080/engine-rest/process-definition/key/pyramide_landing_platform_theory/start" -Credential $credential -ContentType "application/json" | Out-Null}
+```
+
+Remove all running process instances:
+
+```
+$credential = Get-Credential; $(Invoke-RestMethod -Method Get -Uri "http://localhost:8080/engine-rest/process-instance?processDefinitionKey=pyramide_landing_platform_theory" -Credential $credential) | %{Invoke-RestMethod -Method Delete -Uri "http://localhost:8080/engine-rest/process-instance/$($_.id)" -Credential $credential | Out-Null}
+```

@@ -7,9 +7,17 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 var retryPolicyTimeoutInSeconds = TotalRetryTime(NumberOfRetries);
 
+builder.Logging
+    .AddFilter("Default", LogLevel.Information)
+    .AddFilter("System", LogLevel.Warning)
+    .AddFilter("Microsoft", LogLevel.Warning)
+    .AddFilter("Microsoft.Hosting.Lifetime", LogLevel.Information)
+;
+
 var camunda = builder.Services.AddCamunda(options =>
 {
     options.WorkerId = "worker";
+    options.MaximumTasks = 10;
     options.Uri = "http://localhost:8080/engine-rest/";
     options.ResponseTimeoutInSeconds = ResponseTimeoutInSeconds;
 });

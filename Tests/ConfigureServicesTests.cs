@@ -1,5 +1,6 @@
 ﻿using Haland.CamundaExternalTask.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Hosting;
 #if !NET6_0_OR_GREATER
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -58,6 +59,25 @@ public partial class ConfigureServicesTests
             options.WorkerId = "worker";
             options.Uri = uri;
         }));
+    }
+
+    [TestCase(10)]
+    [TestCase(50)]
+    [TestCase(100)]
+    public void Should_register_one_manager_service_per_task(int taskCount)
+    {
+        var services = new ServiceCollection();
+        services.AddCamunda(options =>
+        {
+            options.WorkerId = "worker";
+            options.Uri = "http://localhost/";
+            options.MaximumTasks = taskCount;
+        });
+
+        var serviceProvider = services.BuildServiceProvider();
+        var managerServices = serviceProvider.GetServices<IHostedService>()
+            .Where(s => s.GetType() == typeof(ManagerService));
+        Assert.That(managerServices.Count, Is.EqualTo(taskCount));
     }
 }
 
