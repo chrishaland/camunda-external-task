@@ -50,7 +50,6 @@ public partial class ConfigureServicesTests
 
     [TestCase("", Description = "Uri can't be empty")]
     [TestCase("invalid_uri", Description = "Uri can't be an invalid url")]
-    [TestCase("http://localhost", Description = "Uri must end with '/'")]
     public void Should_fail_registration_with_invalid_uri(string uri)
     {
         var services = new ServiceCollection();
