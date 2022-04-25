@@ -1,6 +1,4 @@
-﻿using System.Threading.Channels;
-
-namespace Haland.CamundaExternalTask.DependencyInjection;
+﻿namespace Haland.CamundaExternalTask.DependencyInjection;
 
 public static class CamundaBuilderServiceCollectionExtentions
 {
@@ -9,14 +7,24 @@ public static class CamundaBuilderServiceCollectionExtentions
         var options = new CamundaOptions();
         configure(options);
 
+        if (!string.IsNullOrEmpty(options.Uri) && !options.Uri.EndsWith('/'))
+        {
+            options.Uri = $"{options.Uri}/";
+        }
+
         if (string.IsNullOrEmpty(options.WorkerId))
         {
             throw new ApplicationException($"Missing or invalid value provided for '{nameof(CamundaOptions.WorkerId)}'");
         }
 
-        if (string.IsNullOrEmpty(options.Uri) || !Uri.TryCreate(options.Uri, UriKind.Absolute, out _) || !options.Uri.EndsWith('/'))
+        if (string.IsNullOrEmpty(options.Uri) || !Uri.TryCreate(options.Uri, UriKind.Absolute, out _))
         {
-            throw new ApplicationException($"Missing or invalid value provided for '{nameof(CamundaOptions.Uri)}' (must be valid URL and end with '/'");
+            throw new ApplicationException($"Missing or invalid value provided for '{nameof(CamundaOptions.Uri)}'");
+        }
+
+        if (options.MaximumTasks <= 0)
+        {
+            throw new ApplicationException($"Invalid value provided for '{nameof(CamundaOptions.MaximumTasks)}'");
         }
 
         var httpClientBuilder = services.AddHttpClient<IExternalTaskClient, ExternalTaskClient>(_ =>
