@@ -15,6 +15,7 @@ public class CamundaOptions
     /// <summary>
     /// Time to wait for external tasks from Camunda. 
     /// <br/>Default: 30
+    /// <br/>Can not be larger than 1800 (30 minutes)
     /// </summary>
     public virtual int ResponseTimeoutInSeconds { get; set; } = 30;
 
