@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.StaticFiles;
+using Samples.Models;
 
 namespace Tests.IntegrationTests.Handlers;
 
@@ -38,12 +39,12 @@ public class GetRidiculedHandler : ExternalTaskHandler
                     fileName: fileInfo.Name,
                     mimeType: contentType
             ) },
-            { "object", Variable.From(new { a = 1, b= 2 }) },
-            { "array", Variable.From(new object[]
-                { 
-                    new { a = 1, b= 2 },
-                    new { a = 3, b= 4 },
-                    new { a = 5, b= 6 },
+            { "object", Variable.From(new DataDto { Property = "object" }) },
+            { "array", Variable.From(new DataDto[]
+                {
+                    new DataDto { Property = "object 1" },
+                    new DataDto { Property = "object 2" },
+                    new DataDto { Property = "object 3" },
                 }
             ) },
             { "xml", Variable.From(new XDocument(new XElement("root", new XElement("star", new XElement("gate"))))) }

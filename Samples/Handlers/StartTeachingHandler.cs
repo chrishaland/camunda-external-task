@@ -1,4 +1,6 @@
-﻿namespace Tests.IntegrationTests.Handlers;
+﻿using Samples.Models;
+
+namespace Tests.IntegrationTests.Handlers;
 
 public class StartTeachingHandler : ExternalTaskHandler
 {
@@ -20,12 +22,8 @@ public class StartTeachingHandler : ExternalTaskHandler
         _ = externalTask.Variables["string"].String;
         _ = externalTask.Variables["file"].File;
         _ = externalTask.Variables["null"].String;
-
-        var objectValueSerialized = externalTask.Variables["object"]?.String;
-        _ = objectValueSerialized == null ? null : JsonConvert.DeserializeObject(objectValueSerialized);
-
-        var arrayValueSerialized = externalTask.Variables["array"]?.String;
-        _ = arrayValueSerialized == null ? null : JsonConvert.DeserializeObject(arrayValueSerialized);
+        _ = externalTask.Variables["object"].As<DataDto>();
+        _ = externalTask.Variables["array"].As<DataDto[]>();
 
         var xmlValueSerialized = externalTask.Variables["xml"]?.String;
         _ = xmlValueSerialized == null ? null : XDocument.Parse(xmlValueSerialized);
