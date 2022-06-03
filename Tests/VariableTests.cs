@@ -143,6 +143,15 @@ public class VariableTests
     }
 
     [Test]
+    public void Should_deserialize_object_from_variable()
+    {
+        var sut = new TestVariable { Property = "Test" };
+        var variable = Variable.From(sut);
+        var result = variable.As<TestVariable>();
+        Assert.That(sut.Property, Is.EqualTo(result?.Property));
+    }
+
+    [Test]
     public void Should_create_a_object_array_variable()
     {
         var variable = Variable.From(new[] { new { a = 1 }, new { a = 2 } });
@@ -154,6 +163,15 @@ public class VariableTests
     {
         var variable = Variable.From((object[]?)null);
         Assert.That(variable.Boolean, Is.Null);
+    }
+
+    [Test]
+    public void Should_deserialize_array_from_variable()
+    {
+        var sut = new[] { new TestVariable { Property = "Test" } };
+        var variable = Variable.From(sut);
+        var result = variable.As<TestVariable[]>();
+        Assert.That(sut[0].Property, Is.EqualTo(result?[0].Property));
     }
 
     [Test]
@@ -191,5 +209,10 @@ public class VariableTests
     {
         var variable = Variable.From(null, "data.xml", "application/xml");
         Assert.That(variable.Boolean, Is.Null);
+    }
+
+    class TestVariable 
+    {
+        public string Property { get; set; } = default!;
     }
 }

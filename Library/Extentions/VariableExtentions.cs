@@ -16,8 +16,10 @@ public abstract partial record Variable
     public static Variable From(string? value) => value == null ? new NullVariable() : new StringVariable(value);
     public static Variable From(byte[]? value, string fileName, string? mimeType, string? encoding = "UTF-8") =>
         value == null ? new NullVariable() : new FileVariable(value, new ValueInfo(null, null, fileName, mimeType, encoding));
-    public static Variable From(object? value) => value == null ? new NullVariable() : new StringVariable(JsonConvert.SerializeObject(value));
-    public static Variable From(object[]? value) => value == null ? new NullVariable() : new StringVariable(JsonConvert.SerializeObject(value));
+    public static Variable From(object? value, string? objectTypeName = null) => value == null ? new NullVariable() : 
+        new ObjectVariable(JsonConvert.SerializeObject(value), new ValueInfo(objectTypeName ?? value.GetType().FullName, "application/json"));
+    public static Variable From(object[]? value, string? objectTypeName = null) => value == null ? new NullVariable() : 
+        new ObjectVariable(JsonConvert.SerializeObject(value), new ValueInfo(objectTypeName != null ? $"java.util.ArrayList<{objectTypeName}>" : $"java.util.ArrayList<{value.GetType().GetElementType()?.FullName}>", "application/json"));
     public static Variable From(XDocument? value) => value == null ? new NullVariable() : new StringVariable(value.ToString(SaveOptions.DisableFormatting));
 
     internal static Variable From(VariableDto dto)
@@ -44,6 +46,7 @@ public abstract partial record Variable
             ValueTypes.Double => From((double?)dto.Value) with { ValueInfo = valueInfo },
             ValueTypes.Date => From((DateTime?)dto.Value) with { ValueInfo = valueInfo },
             ValueTypes.String => From((string?)dto.Value) with { ValueInfo = valueInfo },
+            ValueTypes.Object => From((string?)dto.Value) with { ValueInfo = valueInfo },
             _ => new UnsupportedVariable(dto.Value, dto.Type, valueInfo)
         };
     }
