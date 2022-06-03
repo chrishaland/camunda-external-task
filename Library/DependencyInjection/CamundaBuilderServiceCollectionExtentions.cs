@@ -27,6 +27,11 @@ public static class CamundaBuilderServiceCollectionExtentions
             throw new ApplicationException($"Invalid value provided for '{nameof(CamundaOptions.MaximumTasks)}'");
         }
 
+        if (options.ResponseTimeoutInSeconds > 1800)
+        {
+            throw new ApplicationException($"Invalid value provided for '{nameof(CamundaOptions.ResponseTimeoutInSeconds)}'");
+        }
+
         var httpClientBuilder = services.AddHttpClient<IExternalTaskClient, ExternalTaskClient>(_ =>
         {
             _.BaseAddress = new Uri(options.Uri);
