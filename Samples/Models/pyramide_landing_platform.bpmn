@@ -26,10 +26,22 @@
       <bpmn:outgoing>Flow_0cd8b59</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_0zdmf5g" name="Solves the Stargate riddle" camunda:type="external" camunda:topic="stargate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="local_input">local input</camunda:inputParameter>
+          <camunda:outputParameter name="local_output">${local_string}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0skvikt</bpmn:incoming>
       <bpmn:outgoing>Flow_0s1tayk</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_1ojqjyu" name="Takes job as English teacher" camunda:type="external" camunda:topic="teacher">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="local_input">local input</camunda:inputParameter>
+          <camunda:outputParameter name="local_output">${local_string}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0caw6gw</bpmn:incoming>
       <bpmn:outgoing>Flow_13s2uml</bpmn:outgoing>
     </bpmn:serviceTask>

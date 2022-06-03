@@ -8,6 +8,7 @@ public class SolveStargateRiddleHandler : ExternalTaskHandler
     {
         await Task.CompletedTask;
 
+        _ = externalTask.Variables["local_input"].String;
         _ = externalTask.Variables["contact"].Boolean;
         _ = externalTask.Variables["boolean"].Boolean;
         _ = externalTask.Variables["bytes"].Bytes;
@@ -29,9 +30,15 @@ public class SolveStargateRiddleHandler : ExternalTaskHandler
         var xmlValueSerialized = externalTask.Variables["xml"]?.String;
         _ = xmlValueSerialized == null ? null : XDocument.Parse(xmlValueSerialized);
 
-        return new ExternalTaskCompleteResult(new Dictionary<string, Variable>
-        {
-            { "point_of_origin", Variable.From("Å") }
-        });
+        return new ExternalTaskCompleteResult(
+            Variables: new Dictionary<string, Variable>
+            {
+                { "point_of_origin", Variable.From("Å") }
+            },
+            LocalVariables: new Dictionary<string, Variable>
+            {
+                { "local_string", Variable.From("Å") }
+            }
+        );
     }
 }

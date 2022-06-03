@@ -178,6 +178,16 @@ internal class FailExternalTaskDto
     /// A detailed error description.
     /// </summary>
     public string ErrorDetails { get; set; } = default!;
+
+    /// <summary>
+    /// A JSON object containing variable key-value pairs.
+    /// </summary>
+    public IDictionary<string, VariableDto>? Variables { get; set; }
+
+    /// <summary>
+    /// A JSON object containing local variable key-value pairs.Local variables are set only in the scope of external task.
+    /// </summary>
+    public IDictionary<string, VariableDto>? LocalVariables { get; set; }
 }
 
 internal class CompleteExternalTaskDto 
@@ -191,6 +201,11 @@ internal class CompleteExternalTaskDto
     /// A JSON object containing variable key-value pairs.
     /// </summary>
     public IDictionary<string, VariableDto>? Variables { get; set; }
+
+    /// <summary>
+    /// A JSON object containing local variable key-value pairs.Local variables are set only in the scope of external task.
+    /// </summary>
+    public IDictionary<string, VariableDto>? LocalVariables { get; set; }
 }
 
 internal class BpmnErrorExternalTaskDto
@@ -209,6 +224,11 @@ internal class BpmnErrorExternalTaskDto
     /// An error message that describes the error.
     /// </summary>
     public string ErrorMessage { get; set; } = default!;
+
+    /// <summary>
+    /// A JSON object containing variable key-value pairs.
+    /// </summary>
+    public IDictionary<string, VariableDto>? Variables { get; set; }
 }
 
 internal record VariableDto(JToken? Value, string? Type, ValueInfoDto ValueInfo);
