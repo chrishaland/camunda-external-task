@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
 #if !NET6_0_OR_GREATER
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 #endif
 
 namespace Tests;

@@ -48,3 +48,20 @@ public abstract partial record Variable
         };
     }
 }
+
+internal static class VariableExtentions
+{
+    internal static IDictionary<string, VariableDto> ToDto(this IDictionary<string, Variable> variables) => variables.ToDictionary((kv) => kv.Key, kv =>
+        new VariableDto(
+            Value: kv.Value.Token,
+            Type: kv.Value.Type,
+            ValueInfo: new ValueInfoDto
+            {
+                Encoding = kv.Value.ValueInfo?.Encoding,
+                FileName = kv.Value.ValueInfo?.FileName,
+                MimeType = kv.Value.ValueInfo?.MimeType,
+                ObjectTypeName = kv.Value.ValueInfo?.ObjectTypeName,
+                SerializationDataFormat = kv.Value.ValueInfo?.SerializationDataFormat
+            }
+        ));
+}

@@ -8,6 +8,7 @@ public class StartTeachingHandler : ExternalTaskHandler
     {
         await Task.CompletedTask;
 
+        _ = externalTask.Variables["local_input"].String;
         _ = externalTask.Variables["contact"].Boolean;
         _ = externalTask.Variables["boolean"].Boolean;
         _ = externalTask.Variables["bytes"].Bytes;
@@ -29,9 +30,15 @@ public class StartTeachingHandler : ExternalTaskHandler
         var xmlValueSerialized = externalTask.Variables["xml"]?.String;
         _ = xmlValueSerialized == null ? null : XDocument.Parse(xmlValueSerialized);
 
-        return new ExternalTaskCompleteResult(new Dictionary<string, Variable>
-        {
-            { "started_teaching", Variable.From(true) }
-        });
+        return new ExternalTaskCompleteResult(
+            Variables: new Dictionary<string, Variable>
+            {
+                { "started_teaching", Variable.From(true) }
+            },
+            LocalVariables: new Dictionary<string, Variable>
+            {
+                { "local_string", Variable.From("yes") }
+            }
+        );
     }
 }

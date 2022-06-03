@@ -119,7 +119,9 @@ internal class ManagerService : BackgroundService
             {
                 WorkerId = task.WorkerId,
                 ErrorDetails = failureResult.ErrorDetails,
-                ErrorMessage = failureResult.ErrorMessage
+                ErrorMessage = failureResult.ErrorMessage,
+                Variables = failureResult.Variables?.ToDto(),
+                LocalVariables = failureResult.LocalVariables?.ToDto()
             }, cancellationToken);
         }
         else if (result is ExternalTaskCompleteResult completeResult)
@@ -127,18 +129,8 @@ internal class ManagerService : BackgroundService
             await _client.Complete(task.Id, new CompleteExternalTaskDto
             {
                 WorkerId = task.WorkerId,
-                Variables = completeResult.Variables?.ToDictionary((kv) => kv.Key, kv => new VariableDto(
-                    Value: kv.Value.Token,
-                    Type: kv.Value.Type,
-                    ValueInfo: new ValueInfoDto
-                    {
-                        Encoding = kv.Value.ValueInfo?.Encoding,
-                        FileName = kv.Value.ValueInfo?.FileName,
-                        MimeType = kv.Value.ValueInfo?.MimeType,
-                        ObjectTypeName = kv.Value.ValueInfo?.ObjectTypeName,
-                        SerializationDataFormat = kv.Value.ValueInfo?.SerializationDataFormat
-                    }
-                ))
+                Variables = completeResult.Variables?.ToDto(),
+                LocalVariables = completeResult.LocalVariables?.ToDto(),
             }, cancellationToken);
         }
         else if (result is ExternalTaskBpmnErrorResult bpmnErrorResult)
@@ -147,7 +139,8 @@ internal class ManagerService : BackgroundService
             {
                 WorkerId = task.WorkerId,
                 ErrorCode = bpmnErrorResult.ErrorCode,
-                ErrorMessage = bpmnErrorResult.ErrorMessage
+                ErrorMessage = bpmnErrorResult.ErrorMessage,
+                Variables = bpmnErrorResult.Variables?.ToDto()
             }, cancellationToken);
         }
     }
