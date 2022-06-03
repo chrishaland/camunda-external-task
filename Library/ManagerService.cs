@@ -61,6 +61,9 @@ internal class ManagerService : BackgroundService
 
     private async Task ExecuteExternalTask(Type? externalTaskHandlerType, LockedExternalTaskDto task, CancellationToken cancellationToken)
     {
+        int? maxRetries = null;
+        Func<int, TimeSpan> retryTimeout = _ => TimeSpan.Zero;
+
         try
         {
             if (externalTaskHandlerType == null)
@@ -68,7 +71,7 @@ internal class ManagerService : BackgroundService
                 await NotifyTaskExecutionResult(task, new ExternalTaskFailureResult(
                     ErrorMessage: $"No handler found for topic '{task.TopicName}'",
                     ErrorDetails: $""
-                ), cancellationToken);
+                ), maxRetries, retryTimeout, cancellationToken);
                 return;
             }
 
@@ -88,6 +91,9 @@ internal class ManagerService : BackgroundService
             {
                 using var scope = _serviceProvider.CreateScope();
                 var handler = (IExternalTaskHandler)scope.ServiceProvider.GetRequiredService(externalTaskHandlerType);
+                
+                maxRetries = handler.Retries;
+                retryTimeout = handler.RetryTimeout;
                 result = await handler.Execute(externalTask, cts.Token)
                     .WithTimeout(TimeSpan.FromMilliseconds(lockDuration = handler.LockDuration));
             }
@@ -100,28 +106,31 @@ internal class ManagerService : BackgroundService
                 );
             }
 
-            await NotifyTaskExecutionResult(task, result, cancellationToken);
+            await NotifyTaskExecutionResult(task, result, maxRetries, retryTimeout, cancellationToken);
         }
         catch (Exception ex)
         {
             await NotifyTaskExecutionResult(task, new ExternalTaskFailureResult(
                 ErrorMessage: ex.Message,
                 ErrorDetails: ex.Message + Environment.NewLine + (ex.StackTrace ?? string.Empty)
-            ), cancellationToken);
+            ), maxRetries, retryTimeout, cancellationToken);
         }
     }
 
-    private async Task NotifyTaskExecutionResult(LockedExternalTaskDto task, ExternalTaskResult result, CancellationToken cancellationToken)
+    private async Task NotifyTaskExecutionResult(LockedExternalTaskDto task, ExternalTaskResult result, int? maxRetries, Func<int, TimeSpan> retryTimeout, CancellationToken cancellationToken)
     {
         if (result is ExternalTaskFailureResult failureResult)
         {
+            var retries = task.Retries.HasValue ? task.Retries - 1 : maxRetries;
             await _client.Fail(task.Id, new FailExternalTaskDto
             {
                 WorkerId = task.WorkerId,
                 ErrorDetails = failureResult.ErrorDetails,
                 ErrorMessage = failureResult.ErrorMessage,
                 Variables = failureResult.Variables?.ToDto(),
-                LocalVariables = failureResult.LocalVariables?.ToDto()
+                LocalVariables = failureResult.LocalVariables?.ToDto(),
+                Retries = retries,
+                RetryTimeout = retries.HasValue && retries.Value > 0 ? (long)retryTimeout(retries.Value).TotalMilliseconds : null
             }, cancellationToken);
         }
         else if (result is ExternalTaskCompleteResult completeResult)

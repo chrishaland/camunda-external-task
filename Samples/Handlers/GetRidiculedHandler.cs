@@ -6,6 +6,7 @@ namespace Tests.IntegrationTests.Handlers;
 
 public class GetRidiculedHandler : ExternalTaskHandler
 {
+    private const int _retries = 5;
     private readonly IWebHostEnvironment _environment;
 
     public GetRidiculedHandler(IWebHostEnvironment environment)
@@ -14,10 +15,17 @@ public class GetRidiculedHandler : ExternalTaskHandler
     }
 
     public override string Topic => "ridiculed";
+    public override int? Retries => _retries;
+    public override Func<int, TimeSpan> RetryTimeout => retries => TimeSpan.FromMinutes(Math.Pow(2, _retries - retries + 1));
 
     public override async Task<ExternalTaskResult> Execute(ExternalTask externalTask, CancellationToken ct)
     {
         await Task.CompletedTask;
+
+        var random = new Random();
+        var value = random.Next(0, 10);
+
+        if (value > 5) throw new Exception("Random exception for demonstrating retry policy");
 
         var fileInfo = new FileInfo(Path.Combine(_environment.ContentRootPath, "Files", "data.xml"));
         new FileExtensionContentTypeProvider().TryGetContentType(fileInfo.Name, out var contentType);
