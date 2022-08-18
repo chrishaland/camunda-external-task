@@ -24,9 +24,8 @@ internal class ExternalTaskClient : IExternalTaskClient
         {
             Formatting = Formatting.Indented,
             //RFC 3339 https://datatracker.ietf.org/doc/html/rfc3339
-            //DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.fffK",
-            DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.fff'UTC'",
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+            DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.fffzz'00'",
+            DateTimeZoneHandling = DateTimeZoneHandling.Local,
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
     }
