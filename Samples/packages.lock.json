@@ -4,9 +4,9 @@
     "net6.0": {
       "Microsoft.Extensions.Http.Polly": {
         "type": "Direct",
-        "requested": "[6.0.4, )",
-        "resolved": "6.0.4",
-        "contentHash": "K3b24X9HBAO8JBIizvFsvBjKElNdC3QkgTM1mZoOYowODBf7EkmFlth6ESYuQHCECwBvt8SvanBudiHdWJaA7w==",
+        "requested": "[6.0.8, )",
+        "resolved": "6.0.8",
+        "contentHash": "d67fz83Gl3i4akjxmeqPLxiHAGrRCOHbEmkDpozuz0j0TQfTCMfciHyQLUkMzhH3q9TutAY7qiOFKdmAlKkSFw==",
         "dependencies": {
           "Microsoft.Extensions.Http": "6.0.0",
           "Polly": "7.2.2",
@@ -158,9 +158,9 @@
       "Haland.CamundaExternalTask": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Extensions.Hosting.Abstractions": "6.0.0",
-          "Microsoft.Extensions.Http": "6.0.0",
-          "Newtonsoft.Json": "13.0.1"
+          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, )",
+          "Microsoft.Extensions.Http": "[6.0.0, )",
+          "Newtonsoft.Json": "[13.0.1, )"
         }
       }
     }
