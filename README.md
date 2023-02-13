@@ -1,8 +1,8 @@
+
+
 # Haland.CamundaExternalTask
 
-[![Azure DevOps builds (branch)](https://img.shields.io/azure-devops/build/chrishaland/camunda-external-task/8/main)](https://chrishaland.visualstudio.com/camunda-external-task/_build/latest?definitionId=8&branchName=main)
-[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/chrishaland/camunda-external-task/8/main)](https://chrishaland.visualstudio.com/camunda-external-task/_build/latest?definitionId=8&branchName=main)
-[![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/chrishaland/camunda-external-task/8/main)](https://chrishaland.visualstudio.com/camunda-external-task/_build/latest?definitionId=8&branchName=main)
+![Build](https://github.com/chrishaland/camunda-external-task/actions/workflows/build.yml/badge.svg)
 [![Nuget](https://img.shields.io/nuget/v/Haland.CamundaExternalTask)](https://www.nuget.org/packages/Haland.CamundaExternalTask/)
 [![Nuget](https://img.shields.io/nuget/dt/Haland.CamundaExternalTask)](https://www.nuget.org/packages/Haland.CamundaExternalTask/)
 [![GitHub](https://img.shields.io/github/license/chrishaland/camunda-external-task)](https://github.com/chrishaland/camunda-external-task/blob/main/LICENSE)
