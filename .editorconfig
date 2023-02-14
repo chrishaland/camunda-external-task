@@ -14,7 +14,7 @@ charset = utf-8-bom
 indent_size = 2
 [*.json]
 indent_size = 2
-[*.{xml,xsd}]
+[*.{xml,xsd,csproj}]
 max_line_length = off
 end_of_line = lf
 indent_style = space
