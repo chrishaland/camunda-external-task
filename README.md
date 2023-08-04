@@ -8,7 +8,7 @@
 [![GitHub](https://img.shields.io/github/license/chrishaland/camunda-external-task)](https://github.com/chrishaland/camunda-external-task/blob/main/LICENSE)
 <!-- [![Known Vulnerabilities](https://snyk.io/test/github/chrishaland/camunda-external-task/badge.svg)](https://snyk.io/test/github/chrishaland/camunda-external-task) | Add when .NET projects are supported https://snyk.io/docs/badges/ -->
 
-This project aims to implement the [Camunda](https://camunda.com/) external task pattern, allowing external applications (in this case, a .NET application) to execute [BPMN activities](https://camunda.com/bpmn/reference/#activities).
+This project aims to implement the [Camunda 7 external task pattern](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/), allowing external applications (in this case, a .NET application) to execute [BPMN activities](https://camunda.com/bpmn/reference/#activities) for Camunda 7 business processes.
 
 The workflow roughly looks like the diagram below. However, note that the lock period is specified per topic, as some tasks may take longer to complete than others.
 
