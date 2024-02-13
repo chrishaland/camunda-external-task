@@ -5,37 +5,44 @@ namespace Tests;
 [TestFixture]
 public class ExternalTaskClientTests
 {
-    private static readonly Mock<HttpClient> _httpClient = new();
-    private readonly ExternalTaskClient _sut = new(_httpClient.Object);
+    private static readonly HttpClient _httpClient = Substitute.For<HttpClient>();
+    private readonly ExternalTaskClient _sut = new(_httpClient);
 
     [Test]
     public async Task FetchAndLock_returns_list_of_locked_external_tasks()
     {
         var id = Guid.NewGuid();
 
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(@$"
-                [
-                    {{
-                        ""id"": ""{id}"",
-                        ""topicName"": ""topic"",
-                        ""workerId"": ""worker"",
-                        ""variables"": {{
-                            ""var"": {{
-                                ""value"": ""<root/>"",
-                                ""type"": ""String"",
-                                ""valueInfo"": {{
-                                    ""objectTypeName"": ""XML"",
-                                    ""serializationDataFormat"": ""xml"",
-                                    ""filename"": ""root.xml"",
-                                    ""mimetype"": ""application/xml"",
-                                    ""encoding"": ""utf-8"",
-                                }}
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(HttpStatusCode.OK) 
+                    { 
+                        Content = new StringContent(@$"
+                        [
+                            {{
+                                ""id"": ""{id}"",
+                                ""topicName"": ""topic"",
+                                ""workerId"": ""worker"",
+                                ""variables"": {{
+                                    ""var"": {{
+                                        ""value"": ""<root/>"",
+                                        ""type"": ""String"",
+                                        ""valueInfo"": {{
+                                            ""objectTypeName"": ""XML"",
+                                            ""serializationDataFormat"": ""xml"",
+                                            ""filename"": ""root.xml"",
+                                            ""mimetype"": ""application/xml"",
+                                            ""encoding"": ""utf-8"",
+                                        }}
+                                    }}
+                                }},
                             }}
-                        }},
-                    }}
-                ]
-            ") });
+                        ]
+                    ")
+                    }
+                )
+            );
 
         var response = await _sut.FetchAndLock(new FetchExternalTasksDto 
         {
@@ -66,8 +73,12 @@ public class ExternalTaskClientTests
     [TestCase(HttpStatusCode.BadGateway)]
     public void FetchAndLock_throws_when_http_status_code_is_not_success(HttpStatusCode statusCode)
     {
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(statusCode) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(statusCode) { Content = new StringContent("") }
+                )
+            );
 
         var exception = Assert.ThrowsAsync<HttpRequestException>(() => 
             _sut.FetchAndLock(new FetchExternalTasksDto(), CancellationToken.None)) ?? new HttpRequestException();
@@ -80,8 +91,12 @@ public class ExternalTaskClientTests
     {
         var id = Guid.NewGuid();
 
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") }
+                )
+            );
 
         await _sut.Complete(id, new CompleteExternalTaskDto
         {
@@ -89,11 +104,11 @@ public class ExternalTaskClientTests
             Variables = new Dictionary<string, VariableDto>()
         }, CancellationToken.None);
 
-        _httpClient.Verify(m => m.SendAsync(It.Is<HttpRequestMessage>(r => 
+        _ = _httpClient.Received(1).SendAsync(Arg.Is<HttpRequestMessage>(r =>
             r.Method == HttpMethod.Post &&
             r.RequestUri != null &&
             r.RequestUri.ToString().Contains($"/{id}/")
-        ), CancellationToken.None), Times.Once());
+        ), CancellationToken.None);
     }
 
     [TestCase(HttpStatusCode.Forbidden)]
@@ -103,8 +118,12 @@ public class ExternalTaskClientTests
     [TestCase(HttpStatusCode.BadGateway)]
     public void Complete_throws_when_http_status_code_is_not_success(HttpStatusCode statusCode)
     {
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(statusCode) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(statusCode) { Content = new StringContent("") }
+                )
+            );
 
         var dto = new CompleteExternalTaskDto
         {
@@ -137,8 +156,12 @@ public class ExternalTaskClientTests
     {
         var id = Guid.NewGuid();
 
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") }
+                )
+            );
 
         await _sut.Fail(id, new FailExternalTaskDto
         {
@@ -147,11 +170,11 @@ public class ExternalTaskClientTests
             ErrorMessage = "message"
         }, CancellationToken.None);
 
-        _httpClient.Verify(m => m.SendAsync(It.Is<HttpRequestMessage>(r =>
+        _ = _httpClient.Received(1).SendAsync(Arg.Is<HttpRequestMessage>(r =>
             r.Method == HttpMethod.Post &&
             r.RequestUri != null &&
             r.RequestUri.ToString().Contains($"/{id}/")
-        ), CancellationToken.None), Times.Once());
+        ), CancellationToken.None);
     }
 
     [TestCase(HttpStatusCode.Forbidden)]
@@ -161,8 +184,12 @@ public class ExternalTaskClientTests
     [TestCase(HttpStatusCode.BadGateway)]
     public void Fail_throws_when_http_status_code_is_not_success(HttpStatusCode statusCode)
     {
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(statusCode) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(statusCode) { Content = new StringContent("") }
+                )
+            );
 
         var dto = new FailExternalTaskDto
         {
@@ -182,8 +209,12 @@ public class ExternalTaskClientTests
     {
         var id = Guid.NewGuid();
 
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") }
+                )
+            );
 
         await _sut.BpmnError(id, new BpmnErrorExternalTaskDto
         {
@@ -192,11 +223,11 @@ public class ExternalTaskClientTests
             ErrorMessage = "message"
         }, CancellationToken.None);
 
-        _httpClient.Verify(m => m.SendAsync(It.Is<HttpRequestMessage>(r =>
+        _ = _httpClient.Received(1).SendAsync(Arg.Is<HttpRequestMessage>(r =>
             r.Method == HttpMethod.Post &&
             r.RequestUri != null &&
             r.RequestUri.ToString().Contains($"/{id}/")
-        ), CancellationToken.None), Times.Once());
+        ), CancellationToken.None);
     }
 
     [TestCase(HttpStatusCode.Forbidden)]
@@ -206,8 +237,12 @@ public class ExternalTaskClientTests
     [TestCase(HttpStatusCode.BadGateway)]
     public void BpmnError_throws_when_http_status_code_is_not_success(HttpStatusCode statusCode)
     {
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(statusCode) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(statusCode) { Content = new StringContent("") }
+                )
+            );
 
         var dto = new BpmnErrorExternalTaskDto
         {
@@ -228,8 +263,12 @@ public class ExternalTaskClientTests
     [TestCase("text", "String")]
     public void Post_should_be_able_to_serialize_primitive_values(object value, string type)
     {
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") }
+                )
+            );
 
         Assert.DoesNotThrowAsync(() =>
             _sut.Post(
@@ -253,8 +292,12 @@ public class ExternalTaskClientTests
     [Test]
     public void Post_should_be_able_to_serialize_array_values()
     {
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") }
+                )
+            );
 
         Assert.DoesNotThrowAsync(() =>
             _sut.Post(
@@ -278,8 +321,12 @@ public class ExternalTaskClientTests
     [Test]
     public void Post_should_be_able_to_serialize_object_values()
     {
-        _httpClient.Setup(m => m.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") });
+        _httpClient.SendAsync(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(
+                    new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("") }
+                )
+            );
 
         Assert.DoesNotThrowAsync(() =>
             _sut.Post(

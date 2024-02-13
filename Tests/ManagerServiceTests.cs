@@ -7,7 +7,7 @@ namespace Tests;
 [TestFixture]
 public class ManagerServiceTests
 {
-    private static readonly Mock<IExternalTaskClient> _client = new();
+    private static readonly IExternalTaskClient _client = Substitute.For<IExternalTaskClient>();
 
     private static readonly Channel _channel = new(10);
     private static readonly CamundaOptions _options = new();
@@ -28,7 +28,7 @@ public class ManagerServiceTests
     private readonly ManagerService _sut = new(
         channel: _channel,
         options: _options,
-        client: _client.Object,
+        client: _client,
         logger: _logger,
         handlers: _serviceProvider.GetRequiredService<IEnumerable<IExternalTaskHandler>>(),
         serviceProvider: _serviceProvider
@@ -47,7 +47,8 @@ public class ManagerServiceTests
         });
         await _sut.ExecuteExternalTask(CancellationToken.None);
 
-        _client.Verify(m => m.Fail(id, It.Is<FailExternalTaskDto>(d => d.ErrorMessage.Equals("No handler found for topic 'other-topic'")), It.IsAny<CancellationToken>()), Times.Once());
+        await _client.Received(1)
+            .Fail(id, Arg.Is<FailExternalTaskDto>(d => d.ErrorMessage.Equals("No handler found for topic 'other-topic'")), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -63,7 +64,8 @@ public class ManagerServiceTests
         });
         await _sut.ExecuteExternalTask(CancellationToken.None);
 
-        _client.Verify(m => m.Fail(id, It.Is<FailExternalTaskDto>(d => d.ErrorMessage.Equals("The task execution timed out")), It.IsAny<CancellationToken>()), Times.Once());
+        await _client.Received(1)
+            .Fail(id, Arg.Is<FailExternalTaskDto>(d => d.ErrorMessage.Equals("The task execution timed out")), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -79,7 +81,8 @@ public class ManagerServiceTests
         });
         await _sut.ExecuteExternalTask(CancellationToken.None);
 
-        _client.Verify(m => m.Fail(id, It.Is<FailExternalTaskDto>(d => d.ErrorMessage.Equals("Exception from handler")), It.IsAny<CancellationToken>()), Times.Once());
+        await _client.Received(1)
+            .Fail(id, Arg.Is<FailExternalTaskDto>(d => d.ErrorMessage.Equals("Exception from handler")), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -109,7 +112,8 @@ public class ManagerServiceTests
         });
         await _sut.ExecuteExternalTask(CancellationToken.None);
 
-        _client.Verify(m => m.Complete(id, It.IsAny<CompleteExternalTaskDto>(), It.IsAny<CancellationToken>()), Times.Once());
+        await _client.Received(1)
+            .Complete(id, Arg.Any<CompleteExternalTaskDto>(), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -125,7 +129,8 @@ public class ManagerServiceTests
         });
         await _sut.ExecuteExternalTask(CancellationToken.None);
 
-        _client.Verify(m => m.Fail(id, It.IsAny<FailExternalTaskDto>(), It.IsAny<CancellationToken>()), Times.Once());
+        await _client.Received(1)
+            .Fail(id, Arg.Any<FailExternalTaskDto>(), Arg.Any<CancellationToken>());
     }
 
     [Test]
@@ -141,7 +146,8 @@ public class ManagerServiceTests
         });
         await _sut.ExecuteExternalTask(CancellationToken.None);
 
-        _client.Verify(m => m.BpmnError(id, It.IsAny<BpmnErrorExternalTaskDto>(), It.IsAny<CancellationToken>()), Times.Once());
+        await _client.Received(1)
+            .BpmnError(id, Arg.Any<BpmnErrorExternalTaskDto>(), Arg.Any<CancellationToken>());
     }
 
     class CompleteExternalTaskHandler : ExternalTaskHandler

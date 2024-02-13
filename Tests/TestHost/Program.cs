@@ -14,11 +14,13 @@ camunda
     .AddExternalTask<Test3TaskHandler>()
     .ConfigurePrimaryHttpMessageHandler(_ => 
     {
-        var mock = new Mock<HttpMessageHandler>();
-        mock.Protected()
-            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent("[]") });
-        return mock.Object;        
+        var mock = Substitute.For<HttpMessageHandler>();
+        mock.GetType()?
+            .GetMethod("SendAsync", BindingFlags.NonPublic | BindingFlags.Instance)?
+            .Invoke(mock, [Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()])
+            .Returns(Task.FromResult(new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent("[]") }));
+        
+        return mock;        
     })
 ;
 
