@@ -2,9 +2,9 @@
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
-global using Moq;
-global using Moq.Protected;
+global using NSubstitute;
 global using NUnit.Framework;
 global using System.Diagnostics.CodeAnalysis;
 global using System.Net;
+global using System.Reflection;
 global using Tests.TestHost;
