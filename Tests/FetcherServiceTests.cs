@@ -14,7 +14,7 @@ public class FetcherServiceTests
         .CreateLogger<FetcherService>();
 
     private static readonly ICamundaBuilder _camundaBuilder = new DefaultCamundaBuilder(string.Empty, new ServiceCollection());
-    private static readonly IServiceProvider _serviceProvider = _camundaBuilder.Services.BuildServiceProvider();
+    private static readonly ServiceProvider _serviceProvider = _camundaBuilder.Services.BuildServiceProvider();
 
     private readonly FetcherService _sut = new(
         channel: _channel,
@@ -23,6 +23,12 @@ public class FetcherServiceTests
         logger: _logger,
         handlers: _serviceProvider.GetRequiredService<IEnumerable<IExternalTaskHandler>>()
     );
+
+    [OneTimeTearDown]
+    public async Task After() 
+    {
+        await _serviceProvider.DisposeAsync();
+    }
 
     [Test]
     public async Task Writes_received_locked_tasks_to_channel()
