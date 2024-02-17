@@ -21,7 +21,8 @@ jobs:
           --output output \
           -property:"Version=${{ vars.GITHUB_REF_NAME }}" \
           -property:"AllowedReferenceRelatedFileExtensions="
-      - name: actions/create-release@v1
+      - name: Create release
+        uses: actions/create-release@v1
         with:
             tag_name: ${{ vars.GITHUB_REF_NAME }}
             release_name: Release ${{ vars.GITHUB_REF_NAME }}
