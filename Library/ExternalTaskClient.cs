@@ -70,19 +70,11 @@ internal class ExternalTaskClient : IExternalTaskClient
         request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
         var response = await _client.SendAsync(request, cancellationToken);
-#if NETCOREAPP3_1
-        var content = await response.Content.ReadAsStringAsync();
-#else
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
-#endif
         
         if (!response.IsSuccessStatusCode)
         {
-#if NETCOREAPP3_1
-            throw new HttpRequestException($"Unsuccessful HTTP call to '{requestUri}'. Status code: {response.StatusCode}. Request: {json}. Response: '{content}'");
-#else
             throw new HttpRequestException($"Unsuccessful HTTP call to '{requestUri}'. Status code: {response.StatusCode}. Request: {json}. Response: '{content}'", null, response.StatusCode);
-#endif
         }
         
         return content;
