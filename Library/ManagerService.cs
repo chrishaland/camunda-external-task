@@ -49,6 +49,7 @@ internal class ManagerService : BackgroundService
         catch (Exception ex)
         {
             if (cancellationToken.IsCancellationRequested && ex is TaskCanceledException) return;
+            if (cancellationToken.IsCancellationRequested && ex is OperationCanceledException) return;
 
             _logger.LogError(ex, "An unexpected error occurred while processing Camunda external tasks for worker '{workerId}'. " +
                 "Error message: {errorMessage}", _options.WorkerId, ex.Message);

@@ -63,6 +63,7 @@ internal class FetcherService : BackgroundService
         catch (Exception ex)
         {
             if (cancellationToken.IsCancellationRequested && ex is TaskCanceledException) return;
+            if (cancellationToken.IsCancellationRequested && ex is OperationCanceledException) return;
 
             _logger.LogError(ex, "An unexpected error occurred while fetching external tasks from Camunda for worker '{workerId}'. " +
                 "Error message: {errorMessage}", _options.WorkerId, ex.Message);
