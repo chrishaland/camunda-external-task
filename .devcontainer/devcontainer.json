@@ -1,0 +1,18 @@
+{
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "postAttachCommand": "cd /opt/camunda-7-run && rm -f ./internal/run.pid && nohup ./start.sh",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-dotnettools.csdevkit",
+                "ms-dotnettools.vscode-dotnet-pack",
+                "ms-azuretools.vscode-docker",
+                "redhat.vscode-yaml",
+                "github.vscode-github-actions"
+            ]
+        }    
+    },
+    "forwardPorts": [8080]
+}
