@@ -23,7 +23,7 @@ public class ManagerServiceTests
         .AddExternalTask<ExceptionExternalTaskHandler>()
     ;
 
-    private static readonly IServiceProvider _serviceProvider = _camundaBuilder.Services.BuildServiceProvider();
+    private static readonly ServiceProvider _serviceProvider = _camundaBuilder.Services.BuildServiceProvider();
 
     private readonly ManagerService _sut = new(
         channel: _channel,
@@ -33,6 +33,12 @@ public class ManagerServiceTests
         handlers: _serviceProvider.GetRequiredService<IEnumerable<IExternalTaskHandler>>(),
         serviceProvider: _serviceProvider
     );
+
+    [OneTimeTearDown]
+    public async Task After() 
+    {
+        await _serviceProvider.DisposeAsync();
+    }
 
     [Test]
     public async Task Report_failure_if_there_is_no_handler_to_execute_task()

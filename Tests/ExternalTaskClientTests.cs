@@ -8,6 +8,12 @@ public class ExternalTaskClientTests
     private static readonly HttpClient _httpClient = Substitute.For<HttpClient>();
     private readonly ExternalTaskClient _sut = new(_httpClient);
 
+    [OneTimeTearDown]
+    public void After() 
+    {
+        _httpClient.Dispose();
+    }
+
     [Test]
     public async Task FetchAndLock_returns_list_of_locked_external_tasks()
     {

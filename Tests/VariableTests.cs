@@ -33,7 +33,7 @@ public class VariableTests
     {
         var bytes = Encoding.UTF8.GetBytes("bytes");
         var variable = Variable.From(bytes);
-        CollectionAssert.AreEqual(bytes, variable.Bytes);
+        Assert.That(variable.Bytes, Is.EqualTo(bytes));
     }
 
     [Test]
