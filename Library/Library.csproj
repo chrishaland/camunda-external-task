@@ -7,7 +7,7 @@
     <PackageProjectUrl>https://github.com/chrishaland/camunda-external-task</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/chrishaland/camunda-external-task/main/LICENSE</PackageLicenseUrl>
     <Description>This project implements the external task pattern for Camunda, allowing a .NET application to complete BPMN tasks.</Description>
-    <TargetFrameworks>net7.0;net6.0;net5.0</TargetFrameworks>
+    <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
@@ -26,11 +26,6 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿#if NET6_0_OR_GREATER
-using Haland.CamundaExternalTask.DependencyInjection;
+﻿using Haland.CamundaExternalTask.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +25,5 @@ camunda
 var app = builder.Build();
 app.Run();
 
-#pragma warning disable CA1050 // Declare types in namespaces
 [ExcludeFromCodeCoverage]
 public partial class Program { }
-#pragma warning restore CA1050 // Declare types in namespaces
-#endif
