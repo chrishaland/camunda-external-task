@@ -11,15 +11,13 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        sdk: ['7.0.x', '6.0.x', '5.0.x']
+        sdk: ['7.0.x', '6.0.x']
         configuration: ['Release']
         include:
           - sdk: '7.0.x'
             framework: 'net7.0'
           - sdk: '6.0.x'
             framework: 'net6.0'
-          - sdk: '5.0.x'
-            framework: 'net5.0'
     steps:
       - name: Checkout
         uses: actions/checkout@v3

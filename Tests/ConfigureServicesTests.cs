@@ -1,9 +1,6 @@
 ﻿using Haland.CamundaExternalTask.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
-#if !NET6_0_OR_GREATER
-using Microsoft.AspNetCore.Hosting;
-#endif
 
 namespace Tests;
 
@@ -79,23 +76,7 @@ public partial class ConfigureServicesTests
     }
 }
 
-#if NET6_0_OR_GREATER
 public partial class ConfigureServicesTests
 {
     WebApplicationFactory<Program>? _application = null;
 }
-#else
-public partial class ConfigureServicesTests
-{
-    TestWebApplicationFactory<Startup>? _application = null;
-
-    public class TestWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint> where TEntryPoint : class
-    {
-        protected override IHostBuilder? CreateHostBuilder() => Host
-        .CreateDefaultBuilder()
-        .ConfigureWebHostDefaults(webBuilder => webBuilder
-            .UseStartup<Startup>()
-        );
-    }
-}
-#endif
