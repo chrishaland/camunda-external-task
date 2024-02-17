@@ -72,9 +72,7 @@ public class ExternalTaskClientTests
         var exception = Assert.ThrowsAsync<HttpRequestException>(() => 
             _sut.FetchAndLock(new FetchExternalTasksDto(), CancellationToken.None)) ?? new HttpRequestException();
 
-#if NET5_0_OR_GREATER
         Assert.That(exception.StatusCode, Is.EqualTo(statusCode));
-#endif
     }
 
     [Test]
@@ -131,9 +129,7 @@ public class ExternalTaskClientTests
         var exception = Assert.ThrowsAsync<HttpRequestException>(() =>
             _sut.Complete(Guid.NewGuid(), dto, CancellationToken.None)) ?? new HttpRequestException();
 
-#if NET5_0_OR_GREATER
         Assert.That(exception.StatusCode, Is.EqualTo(statusCode));
-#endif
     }
 
     [Test]
@@ -178,9 +174,7 @@ public class ExternalTaskClientTests
         var exception = Assert.ThrowsAsync<HttpRequestException>(() =>
             _sut.Fail(Guid.NewGuid(), dto, CancellationToken.None)) ?? new HttpRequestException();
 
-#if NET5_0_OR_GREATER
         Assert.That(exception.StatusCode, Is.EqualTo(statusCode));
-#endif
     }
 
     [Test]
@@ -225,9 +219,7 @@ public class ExternalTaskClientTests
         var exception = Assert.ThrowsAsync<HttpRequestException>(() =>
             _sut.BpmnError(Guid.NewGuid(), dto, CancellationToken.None)) ?? new HttpRequestException();
 
-#if NET5_0_OR_GREATER
         Assert.That(exception.StatusCode, Is.EqualTo(statusCode));
-#endif
     }
 
     [TestCase(42, "Integer")]
