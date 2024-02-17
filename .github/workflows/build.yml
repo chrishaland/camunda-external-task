@@ -11,9 +11,11 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        sdk: ['7.0.x', '6.0.x']
+        sdk: ['8.0.x', '7.0.x', '6.0.x']
         configuration: ['Release']
         include:
+          - sdk: '8.0.x'
+            framework: 'net8.0'
           - sdk: '7.0.x'
             framework: 'net7.0'
           - sdk: '6.0.x'
